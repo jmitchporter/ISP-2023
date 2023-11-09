@@ -1,0 +1,837 @@
+---
+title: "Integrated trophic web expl"
+author: "Mitch Porter"
+output: html_document
+date: "2023-11-09"
+---
+
+Work with original trophic web
+```{r setup, include=FALSE}
+#load packages
+library(ggplot2)
+library(tidyverse)
+library(igraph)
+library(multiweb)
+library(NetIndices)
+
+#load data
+links <- read.csv("InteractionList_Burdwood.csv")
+nodes <- read.csv("BurdwoodSpeciesList.csv")
+
+#create igraph
+bb_igraph <- graph_from_data_frame(d=links, vertices=nodes, directed=T)
+
+#from "Kortsch, S.; Frelat, R.; Pecuchet, L.; Olivier, P.; Putnis, I.; Bonsdorff, E.; Ojaveer, H.; Jurgensone, I.; Strake, S.; Rubene, G.; Kruze, E. and Nordström, M. (2022). Introduction to food webs metrics: the Gulf of Riga case study. https://rfrelat.github.io/BalticFoodWeb.html":
+
+trophiclevels <- function(net){
+  #Get adjacency matrix 
+  mat <- get.adjacency(net, sparse=F)
+  
+  #Detect basal node
+  basal <- rownames(subset(mat, apply(mat, 2, sum)==0) & apply(mat, 1, sum)!= 0)
+  #Compute the shortest path to basal node
+  paths_prey <- suppressWarnings(shortest.paths(graph = net, v= V(net), to = V(net)[basal], 
+                                                mode = "in", weights = NULL, algorithm = "unweighted"))
+  
+  paths_prey[is.infinite(paths_prey)] <- NA
+  shortest_paths <- suppressWarnings(as.matrix(apply(paths_prey, 1, min, na.rm=TRUE)))
+  shortest_paths[is.infinite(shortest_paths)] <- NA
+  sTL <- 1 + shortest_paths
+  W <- t(mat)
+  rs <- rowSums(W)
+  W <- W/matrix(rs, ncol = ncol(W), nrow = nrow(W))
+  W[0 == rs, ] <- 0
+  I <- diag(ncol(W))
+  tl0<-rowSums(I - W)
+  result <- tryCatch(solve(I - W), error = function(e) e)
+  if ("error" %in% class(result)) {
+    avtl <- rep(NA, ncol(pm))
+    names(avtl) <- colnames(pm)
+  }
+  else {
+    avtl <- rowSums(result)
+  }
+  
+  # Short-weighted TL is the average between 
+  # Shortest TL and average prey TL
+  SWTL <- (sTL + avtl)/2
+  
+  return(SWTL)
+}
+
+#calculate key stats, add to dataframe
+tl <- trophiclevels(bb_igraph)
+nodes$tl = tl
+conn <- degree(bb_igraph, v = V(bb_igraph), mode = c("all", "out", "in", "total"), loops = TRUE, normalized = FALSE)
+nodes$conn = conn
+
+#data are exported and used to inform following lists
+```
+
+Work with isolated ES providers
+```{r}
+#load data #dataframe restricted to solely ES providers
+ES_list <- read_csv("ESProvidersList.csv")
+
+#boxplots
+boxplot(tl~SE_num,data=ES_list, xlab="Servicio Ecosistémico", ylab="Nivel Trófico")
+boxplot(conn~SE_num,data=ES_list, xlab="Servicio Ecosistémico", ylab="Cantidad de Conexiones")
+```
+
+```{r}
+#load data
+ESlinks <- read_csv("ESInteractionList_Burdwood.csv")
+ESnodes <- read_csv("ESBurdwoodSpeciesList.csv")
+
+#create igraph
+bbES_igraph <- graph_from_data_frame(d=ESlinks, vertices=ESnodes, directed=T)
+V(bbES_igraph)$label <- NA
+```
+```{r}
+#Ecosystem services graphic option 1
+#highlights roles of all ES
+
+EStl <- trophiclevels(bbES_igraph)
+ESnodes$tl = EStl
+bbES_igraph <- graph_from_data_frame(d=ESlinks, vertices=ESnodes, directed=T)
+
+plot_ES_troph <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype > 20, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype > 0, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype > 20, "darkcyan", 
+                      ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                )))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph(bbES_igraph)
+
+#Ecosystem services graphics option 2
+#isolates a particular ES, highlights providers
+#ES 1 - fishing:
+plot_ES_troph_ES1 <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 27, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype == 1, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 27, "darkcyan",
+                      ifelse(V(g)$vertextype == 1, "cadetblue3",
+                      ifelse(V(g)$vertextype == 12, "cadetblue3",
+                      ifelse(V(g)$vertextype == 13, "cadetblue3",
+                      ifelse(V(g)$vertextype == 16, "cadetblue3",
+                        ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                )))))))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph_ES1(bbES_igraph)
+
+#ES 2 - primary material:
+plot_ES_troph_ES2 <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 26, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype == 2, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 26, "darkcyan",
+                      ifelse(V(g)$vertextype == 2, "cadetblue3",
+                      ifelse(V(g)$vertextype == 8, "cadetblue3",
+                      ifelse(V(g)$vertextype == 10, "cadetblue3",
+                      ifelse(V(g)$vertextype == 14, "cadetblue3",
+                        ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                )))))))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph_ES2(bbES_igraph)
+
+#ES 3 - biodiversity:
+plot_ES_troph_ES3 <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 21, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype == 3, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 21, "darkcyan",
+                      ifelse(V(g)$vertextype == 3, "cadetblue3",
+                      ifelse(V(g)$vertextype == 8, "cadetblue3",
+                      ifelse(V(g)$vertextype == 9, "cadetblue3",
+                      ifelse(V(g)$vertextype == 11, "cadetblue3",
+                      ifelse(V(g)$vertextype == 14, "cadetblue3",
+                      ifelse(V(g)$vertextype == 15, "cadetblue3",
+                        ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                )))))))))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph_ES3(bbES_igraph)
+
+#ES 4 - biopurification:
+plot_ES_troph_ES4 <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 22, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype == 4, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 22, "darkcyan",
+                      ifelse(V(g)$vertextype == 11, "cadetblue3",
+                        ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                ))))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph_ES4(bbES_igraph)
+
+#ES 5 - carbon flux:
+plot_ES_troph_ES5 <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 23, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype == 5, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 23, "darkcyan",
+                      ifelse(V(g)$vertextype == 5, "cadetblue3",
+                      ifelse(V(g)$vertextype == 9, "cadetblue3",
+                      ifelse(V(g)$vertextype == 10, "cadetblue3",
+                      ifelse(V(g)$vertextype == 11, "cadetblue3",
+                      ifelse(V(g)$vertextype == 13, "cadetblue3",
+                      ifelse(V(g)$vertextype == 14, "cadetblue3",
+                      ifelse(V(g)$vertextype == 16, "cadetblue3",
+                        ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                ))))))))))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph_ES5(bbES_igraph)
+
+#ES 6 - identity and geopolitics:
+plot_ES_troph_ES6 <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 25, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype == 6, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 25, "darkcyan",
+                      ifelse(V(g)$vertextype == 6, "cadetblue3",
+                      ifelse(V(g)$vertextype == 12, "cadetblue3",
+                      ifelse(V(g)$vertextype == 15, "cadetblue3",
+                      ifelse(V(g)$vertextype == 16, "cadetblue3",
+                        ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                )))))))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph_ES6(bbES_igraph)
+
+#ES 7 - education:
+plot_ES_troph_ES7 <- function(g,vertexLabel=FALSE,vertexSizeFactor=5,vertexSizeMin=5,tk=FALSE,modules=FALSE,lMat=NULL,weights=NA,community_obj=NULL, bpal= NULL,
+                             maxTL=NULL,...){
+
+  deg <- degree(g, mode="all") 
+  V(g)$size <- ifelse(V(g)$vertextype == 24, 15, log10(deg)*vertexSizeFactor+vertexSizeMin)
+  V(g)$frame.color <- NA
+  V(g)$color <- "orange"
+  E(g)$color <- ifelse(E(g)$edgetype == 7, "grey15", "grey85")
+  if(!vertexLabel)
+    V(g)$label <- NA
+  if(inherits(g, "mgraph") && ("Trophic" %in% unique(unlist(edge.attributes(g)))) ){
+    tt <- subgraph.edges(g,E(g)[E(g)$type=="Trophic"])
+    tl <- TrophInd(get.adjacency(tt,sparse=F))
+  } else {
+    adj <- get.adjacency(g,sparse=F)
+    colnames(adj) <- NULL
+    rownames(adj) <- NULL
+    tl <- TrophInd(adj)
+  }
+  if(is.null(lMat)){
+    lMat <-matrix(
+      nrow=vcount(g),
+      ncol=2
+    )
+
+    lMat[,2]<-jitter(tl$TL,0.1)
+    if(modules) {
+      if(!is.null(community_obj)) {
+        m <- community_obj
+      } else {
+        if(count_components(g)>1){
+          if(!is.named(g)) V(g)$name <- (1:vcount(g))
+          dg <- components(g)
+          V(g)$membership = 0
+          for(comp in unique(dg$membership)) {
+            g1 <- induced_subgraph(g, which(dg$membership == comp))
+            m<-cluster_spinglass(g1,weights=weights)
+            if(length(m$membership)==0)
+              m$membership <- 1
+            V(g)[V(g1)$name]$membership <-  m$membership + max(V(g)$membership)
+          }
+          m$membership <- V(g)$membership
+
+        } else {
+          m<-cluster_spinglass(g,weights=weights)
+        }
+      }
+      df <- data.frame(tl=tl$TL,m=m$membership)
+      df <- df %>% mutate(m = dense_rank(ave(tl, m, FUN = max)))
+      lMat[,1]<-jitter(df$m,1)
+    } else {
+      lMat[,1]<-runif(vcount(g))
+    }
+  }
+  
+ V(g)$color <- ifelse(V(g)$vertextype == 24, "darkcyan",
+                      ifelse(V(g)$vertextype == 7, "cadetblue3",
+                        ifelse(V(g)$tl < .71, "grey80", 
+                         ifelse(V(g)$tl < 1.4, "grey74",
+                            ifelse(V(g)$tl < 2.1, "grey68", 
+                              ifelse(V(g)$tl < 2.8, "grey62",
+                                ifelse(V(g)$tl < 3.6, "grey56",
+                                  ifelse(V(g)$tl < 4.3, "grey50","grey44"
+                                
+                                
+                                ))))))))
+
+  if(tk){
+    tkid <- tkplot(g, edge.arrow.size=.1,
+       edge.curved=0.3, layout=lMat,...)
+    return( tkplot.getcoords(tkid))
+
+  } else {
+    plot(g, edge.arrow.size=.2,
+         edge.curved=0.3, layout=lMat,...)
+    maxnew <- max(tl$TL)
+    minnew <- min(tl$TL)
+    maxold <- 1
+    minold <- -1
+    t2 <- function(x) (maxold-minold)/(maxnew -minnew)*(x - maxnew)+maxold
+    tlseq <- seq(1,ifelse(is.null(maxTL),maxnew+1,maxTL),by=1)
+    axis(side=2,at=t2(tlseq),labels=tlseq,  las=1, col = NA, col.ticks = 1)
+
+
+  }
+
+}
+plot_ES_troph_ES7(bbES_igraph)
+```
