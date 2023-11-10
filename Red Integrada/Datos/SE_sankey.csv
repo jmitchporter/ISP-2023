@@ -1,0 +1,88 @@
+Species,TaxLevel,FunctionalGroup,SE_num
+Alcyonium antarcticum,Species,4,2
+Alcyonium antarcticum,Species,4,3
+Amblyraja doellojuradoi,Species,12,1
+Amblyraja georgiana,Species,12,1
+Anthoptilum grandiflorum,Species,4,2
+Anthoptilum grandiflorum,Species,4,3
+Aplidium,Species,3,2
+Asbestopluma,Species,1,3
+Asbestopluma,Species,1,5
+Astrotoma agassizii,Species,6,2
+Astrotoma agassizii,Species,6,5
+Austrodoris,Species,8,2
+Balticina africana,Species,5,3
+Bathyraja griseocauda,Species,12,1
+Brachiopoda,Species,7,3
+Bryozoa,Other,2,2
+Bryozoa,Other,2,5
+Calcarea,Class,1,3
+Calcarea,Class,1,5
+Calliostoma,Species,8,3
+Campanularia,Species,7,3
+Clathria,Species,1,3
+Clathria,Species,1,4
+Clathria,Species,1,5
+Clavularia,Species,4,2
+Clavularia,Species,4,3
+Colpospirella algida,Species,8,3
+Convexella magelhaenica,Species,4,2
+Convexella magelhaenica,Species,4,3
+Cyrtostrombidium,Species,10,5
+Dissostichus eleginoides,Species,11,6
+Dissostichus eleginoides,Species,11,1
+Doryteuthis gahi,Species,9,1
+Doryteuthis gahi,Species,9,5
+Eubalaena australis,Species,14,7
+Eudyptes chrysocome,Species,15,7
+Flabellum,Species,4,3
+Fuegotrophon pallidus,Species,8,3
+Genypterus blacodes,Species,11,1
+Gorgonocephalus chilensis,Species,6,5
+Halichondrida,Order,1,3
+Halichondrida,Order,1,5
+Haplosclerida,Order,1,3
+Haplosclerida,Order,1,5
+Hexactinellida,Class,1,3
+Hexactinellida,Class,1,4
+Hexactinellida,Class,1,5
+Ideogorgia laurae,Species,4,3
+Laboea strobila,Species,10,5
+Latrunculia,Species,1,2
+Latrunculia,Species,1,3
+Latrunculia,Species,1,5
+Lohmanniella,Species,10,5
+Macronectes giganteus,Species,15,7
+Macruronus novaezelandiae,Species,11,1
+Margarella,Species,8,3
+Micromesistius australis,Species,13,1
+Orbiniidae,Family,7,3
+Ornatoscalpellum gibberum,Species,7,3
+Pareuthria,Species,8,3
+Patagonotothen kreffti,Species,11,3
+Patagonotothen kreffti,Species,11,6
+Patagonotothen ramsayi,Species,11,1
+Patagonotothen ramsayi,Species,11,5
+Patagonotothen ramsayi,Species,11,6
+Phalacrocorax atriceps,Species,15,7
+Poecilosclerida,Order,1,3
+Poecilosclerida,Order,1,5
+Primnoella scotiae,Species,4,3
+Primnoisis antarctica,Species,4,3
+Spheniscus magellanicus,Species,15,7
+Sprattus fuegensis,Species,13,1
+Sprattus fuegensis,Species,13,5
+Sprattus fuegensis,Species,13,6
+Strobilidium,Species,10,5
+Strombidinopsis,Species,10,5
+Strombidium,Species,10,5
+Synechococcus,Species,10,5
+Tedania,Species,1,2
+Tedania,Species,1,3
+Tedania,Species,1,5
+Tetractinellida,Order,1,3
+Tetractinellida,Order,1,5
+Thouarella,Species,4,3
+Trophon ohlini,Species,8,3
+Trophon plicatus,Species,8,3
+Tulpa tulipifera,Species,5,3
