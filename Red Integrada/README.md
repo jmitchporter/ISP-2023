@@ -14,7 +14,7 @@ Se encuentran en el archivo gráficos.
 
 
 
-Notas para uso de datos:
+<i>Notas para uso de datos:</i>
 
 Representaciones númericos para cada SE se usan:
 1. Pesca
