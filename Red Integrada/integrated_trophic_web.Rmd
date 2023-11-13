@@ -22,8 +22,8 @@ nodes <- read.csv("BurdwoodSpeciesList.csv")
 bb_igraph <- graph_from_data_frame(d=links, vertices=nodes, directed=T)
 
 #from "Kortsch, S.; Frelat, R.; Pecuchet, L.; Olivier, P.; Putnis, I.; Bonsdorff, E.; 
-Ojaveer, H.; Jurgensone, I.; Strake, S.; Rubene, G.; Kruze, E. and Nordström, M. (2022). 
-Introduction to food webs metrics: the Gulf of Riga case study. https://rfrelat.github.io/BalticFoodWeb.html":
+#Ojaveer, H.; Jurgensone, I.; Strake, S.; Rubene, G.; Kruze, E. and Nordström, M. (2022). 
+#Introduction to food webs metrics: the Gulf of Riga case study. https://rfrelat.github.io/BalticFoodWeb.html":
 
 trophiclevels <- function(net){
   #Get adjacency matrix 
