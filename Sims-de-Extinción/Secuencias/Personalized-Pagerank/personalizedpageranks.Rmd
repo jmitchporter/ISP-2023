@@ -31,7 +31,7 @@ fishing_support <- fishing_SPP[!(fishing_SPP$SpeciesID %in% fishing_direct$Speci
 attach(fishing_support)
 fishing_support <- fishing_support[order(-prob),] #ordered from high to low prob
 detach(fishing_support)
-write.csv(fishing_support,"./EPB_Indirect_Fishing.csv")
+write.csv(fishing_support,"./Indirect_Fishing.csv")
 
 #ES2 - primary materials
 
@@ -43,7 +43,7 @@ primary_mat_support <- primary_mat_SPP[!(primary_mat_SPP$SpeciesID %in% primary_
 attach(primary_mat_support)
 primary_mat_support <- primary_mat_support[order(-prob),] #ordered from high to low prob
 detach(primary_mat_support)
-write.csv(primary_mat_support,"./EPB_Indirect_Primary_Mat.csv")
+write.csv(primary_mat_support,"./Indirect_Primary_Mat.csv")
 
 #ES3 - biodiversity
 
@@ -55,7 +55,7 @@ biodiversity_support <- biodiversity_SPP[!(biodiversity_SPP$SpeciesID %in% biodi
 attach(biodiversity_support)
 biodiversity_support <- biodiversity_support[order(-prob),] #ordered from high to low prob
 detach(biodiversity_support)
-write.csv(biodiversity_support,"./EPB_Indirect_Biodiversity.csv")
+write.csv(biodiversity_support,"./Indirect_Biodiversity.csv")
 
 #ES4 - biopurification
 
@@ -67,7 +67,7 @@ biopurification_support <- biopurification_SPP[!(biopurification_SPP$SpeciesID %
 attach(biopurification_support)
 biopurification_support <- biopurification_support[order(-prob),] #ordered from high to low prob
 detach(biopurification_support)
-write.csv(biopurification_support,"./EPB_Indirect_Biopurification.csv")
+write.csv(biopurification_support,"./Indirect_Biopurification.csv")
 
 #ES5 - carbon flux
 
@@ -79,7 +79,7 @@ carbon_flux_support <- carbon_flux_SPP[!(carbon_flux_SPP$SpeciesID %in% carbon_f
 attach(carbon_flux_support)
 carbon_flux_support <- carbon_flux_support[order(-prob),] #ordered from high to low prob
 detach(carbon_flux_support)
-write.csv(carbon_flux_support,"./EPB_Indirect_Carbon_Flux.csv")
+write.csv(carbon_flux_support,"./Indirect_Carbon_Flux.csv")
 
 #ES5 - carbon flux
 
@@ -91,7 +91,7 @@ carbon_seq_support <- carbon_seq_SPP[!(carbon_seq_SPP$SpeciesID %in% carbon_seq_
 attach(carbon_seq_support)
 carbon_seq_support <- carbon_seq_support[order(-prob),] #ordered from high to low prob
 detach(carbon_seq_support)
-write.csv(carbon_seq_support,"./EPB_Indirect_Carbon_Seq.csv")
+write.csv(carbon_seq_support,"./Indirect_Carbon_Seq.csv")
 
 #ES7 - identity
 
@@ -103,7 +103,7 @@ identity_support <- identity_SPP[!(identity_SPP$SpeciesID %in% identity_direct$S
 attach(identity_support)
 identity_support <- identity_support[order(-prob),] #ordered from high to low prob
 detach(identity_support)
-write.csv(identity_support,"./EPB_Indirect_Identity.csv")
+write.csv(identity_support,"./Indirect_Identity.csv")
 
 #ES8 - education & research
 
@@ -115,7 +115,7 @@ education_support <- education_SPP[!(education_SPP$SpeciesID %in% education_dire
 attach(education_support)
 education_support <- education_support[order(-prob),] #ordered from high to low prob
 detach(education_support)
-write.csv(education_support,"./EPB_Indirect_Education.csv")
+write.csv(education_support,"./Indirect_Education.csv")
 
 #calculating aggregate probability
 
