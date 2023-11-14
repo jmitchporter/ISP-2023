@@ -1,0 +1,138 @@
+Species,TaxLevel,FunctionalGroup_Num,tl,conn,EcosystemService_Num,ES_Name
+Actinostola_crassicornis,Species,5,2.416666667,7,3,Biodiversidad
+Adelomelon_ancilla,Species,8,3.232358373,5,3,Biodiversidad
+Alcyonium_antarcticum,Species,4,2,5,6,Secuestro de carbono
+Alcyonium_antarcticum,Species,4,2,5,3,Biodiversidad
+Alcyonium_antarcticum,Species,4,2,5,2,Materia prima
+Amblyraja_doellojuradoi,Species,13,2.772222141,26,3,Biodiversidad
+Amblyraja_doellojuradoi,Species,13,2.772222141,26,1,Pesca
+Amblyraja_georgiana,Species,13,2.888967315,23,1,Pesca
+Anasterias_antarctica,Species,6,3.285714286,2,3,Biodiversidad
+Anthoptilum_grandiflorum,Species,4,2.388888889,9,3,Biodiversidad
+Anthoptilum_grandiflorum,Species,4,2.388888889,9,2,Materia prima
+Aplidium_spp,Species,3,2.05,13,2,Materia prima
+Arctocephalus_australis,Species,15,3.207658372,23,8,Educacion
+Asbestopluma_sp,Species,1,3.437314046,3,6,Secuestro de carbono
+Asbestopluma_sp,Species,1,3.437314046,3,3,Biodiversidad
+Astrotoma_agassizii,Species,6,2.21765317,11,6,Secuestro de carbono
+Astrotoma_agassizii,Species,6,2.21765317,11,2,Materia prima
+Austrodoris_sp,Species,8,3.045454545,5,2,Materia prima
+Balaenoptera_acutorostrata,Species,15,2.821251293,13,8,Educacion
+Balaenoptera_bonaerensis,Species,15,3.336825896,10,8,Educacion
+Balaenoptera_borealis,Species,15,2.759854913,12,8,Educacion
+Balaenoptera_physalus,Species,15,2.759854913,12,8,Educacion
+Balticina_africana,Species,5,2.388888889,10,3,Biodiversidad
+Bathyraja_albomaculata,Species,13,2.971941539,11,3,Biodiversidad
+Bathyraja_griseocauda,Species,13,3.13884115,29,1,Pesca
+Bathyraja_macloviana,Species,13,2.718447577,10,3,Biodiversidad
+Bathyraja_scaphiops,Species,13,3.550471822,9,3,Biodiversidad
+Bolocera_kerguelensis,Species,5,1,1,3,Biodiversidad
+Brachiopoda_spp,Species,7,2,24,3,Biodiversidad
+Bryozoa,Other,2,2,15,6,Secuestro de carbono
+Bryozoa,Other,2,2,15,2,Materia prima
+Calcarea,Class,1,2.055555556,9,6,Secuestro de carbono
+Calcarea,Class,1,2.055555556,9,3,Biodiversidad
+Calliostoma_spp,Species,8,1,4,3,Biodiversidad
+Campanularia_sp,Species,6,2,2,3,Biodiversidad
+Ceramaster_patagonicus,Species,5,3.264267677,4,3,Biodiversidad
+Clathria_spp,Species,1,2,2,6,Secuestro de carbono
+Clathria_spp,Species,1,2,2,4,Biopurificacion
+Clathria_spp,Species,1,2,2,3,Biodiversidad
+Clavularia_sp,Species,4,2.125,6,6,Secuestro de carbono
+Clavularia_sp,Species,4,2.125,6,3,Biodiversidad
+Clavularia_sp,Species,4,2.125,6,2,Materia prima
+Colpospirella_algida,Species,8,1,3,3,Biodiversidad
+Convexella_magelhaenica,Species,4,2.35,14,3,Biodiversidad
+Convexella_magelhaenica,Species,4,2.35,14,2,Materia prima
+Cosmasterias_lurida,Species,6,2.660624098,12,3,Biodiversidad
+Cyrtostrombidium_sp,Species,11,2,12,5,Flujo de carbono
+Dissostichus_eleginoides,Species,12,3.112380095,54,6,Secuestro de carbono
+Dissostichus_eleginoides,Species,12,3.112380095,54,1,Pesca
+Doryteuthis_gahi,Species,10,3.716377993,42,5,Flujo de carbono
+Doryteuthis_gahi,Species,10,3.716377993,42,1,Pesca
+Eubalaena_australis,Species,15,3.246033825,8,8,Educacion
+Eudyptes_chrysocome,Species,16,3.790749603,6,8,Educacion
+Eurhomalea_sp,Species,9,2,8,3,Biodiversidad
+Flabellum_spp,Species,4,2,2,6,Secuestro de carbono
+Flabellum_spp,Species,4,2,2,3,Biodiversidad
+Fuegotrophon_pallidus,Species,8,2.285714286,11,3,Biodiversidad
+Fusitriton_magellanicus,Species,8,3.054217977,8,3,Biodiversidad
+Genypterus_blacodes,Species,12,3.027019677,17,1,Pesca
+Globicephala_melas,Species,15,3.865838866,9,8,Educacion
+Gorgonocephalus_chilensis,Species,6,3.305599335,4,6,Secuestro de carbono
+Halichondrida,Order,1,2.071428571,8,6,Secuestro de carbono
+Halichondrida,Order,1,2.071428571,8,4,Biopurificacion
+Halichondrida,Order,1,2.071428571,8,3,Biodiversidad
+Haplosclerida,Order,1,2.045454545,16,6,Secuestro de carbono
+Haplosclerida,Order,1,2.045454545,16,4,Biopurificacion
+Haplosclerida,Order,1,2.045454545,16,3,Biodiversidad
+Henricia_obesa,Species,6,2.1,5,3,Biodiversidad
+Hexactinellida,Class,1,2.125,5,6,Secuestro de carbono
+Hexactinellida,Class,1,2.125,5,4,Biopurificacion
+Hexactinellida,Class,1,2.125,5,3,Biodiversidad
+Hormathia_pectinata,Species,5,3.388888889,2,3,Biodiversidad
+Ideogorgia_laurae,Species,4,2,6,6,Secuestro de carbono
+Ideogorgia_laurae,Species,4,2,6,3,Biodiversidad
+Isosicyonis_alba,Species,5,1,2,3,Biodiversidad
+Laboea_strobila,Species,11,2,12,5,Flujo de carbono
+Latrunculia_sp,Species,1,1,2,6,Secuestro de carbono
+Latrunculia_sp,Species,1,1,2,4,Biopurificacion
+Latrunculia_sp,Species,1,1,2,3,Biodiversidad
+Latrunculia_sp,Species,1,1,2,2,Materia prima
+Lohmanniella_sp,Species,11,2,12,5,Flujo de carbono
+Macronectes_giganteus,Species,16,3.095189077,7,8,Educacion
+Macruronus_novaezelandiae,Species,12,3.665106524,21,1,Pesca
+Margarella_spp,Species,8,1,2,3,Biodiversidad
+Micromesistius_australis,Species,14,3.058007846,39,3,Biodiversidad
+Micromesistius_australis,Species,14,3.058007846,39,1,Pesca
+Odontaster_penicillatus,Species,6,2.471428571,7,3,Biodiversidad
+Ophiacantha_sp,Species,6,3,4,6,Secuestro de carbono
+Ophiacantha_vivipara,Species,6,3.227641096,7,6,Secuestro de carbono
+Ophiactis_sp,Species,6,2.5,3,6,Secuestro de carbono
+Ophiocten_amitinum,Species,6,2,3,6,Secuestro de carbono
+Ophiolimna_antarctica,Species,6,2.125,4,6,Secuestro de carbono
+Ophioplinthus_confragosa,Species,6,2,1,6,Secuestro de carbono
+Ophioplinthus_inornata,Species,6,2,1,6,Secuestro de carbono
+Ophiura_lymani,Species,6,1,1,6,Secuestro de carbono
+Orbiniidae,Family,7,2.1,12,3,Biodiversidad
+Ornatoscalpellum_gibberum,Species,7,2,3,3,Biodiversidad
+Otaria_flavescens,Species,15,3.210348529,24,8,Educacion
+Parabuccinum_politum,Species,8,2,1,3,Biodiversidad
+Pareuthria_spp,Species,8,1,2,3,Biodiversidad
+Patagonotothen_kreffti,Species,12,3,7,7,Identidad
+Patagonotothen_kreffti,Species,12,3,7,3,Biodiversidad
+Patagonotothen_ramsayi,Species,12,2.7922031,68,7,Identidad
+Patagonotothen_ramsayi,Species,12,2.7922031,68,5,Flujo de carbono
+Patagonotothen_ramsayi,Species,12,2.7922031,68,1,Pesca
+Phalacrocorax_atriceps,Species,16,3.086922139,7,8,Educacion
+Poecilosclerida,Order,1,2.041666667,17,6,Secuestro de carbono
+Poecilosclerida,Order,1,2.041666667,17,4,Biopurificacion
+Poecilosclerida,Order,1,2.041666667,17,3,Biodiversidad
+Primnoella_scotiae,Species,4,2.388888889,13,6,Secuestro de carbono
+Primnoella_scotiae,Species,4,2.388888889,13,3,Biodiversidad
+Primnoisis_antarctica,Species,4,2.318181818,14,6,Secuestro de carbono
+Primnoisis_antarctica,Species,4,2.318181818,14,3,Biodiversidad
+Psammobatis_rudis,Species,13,3.421153811,5,3,Biodiversidad
+Pteraster_affinis,Species,6,3,3,3,Biodiversidad
+Spheniscus_magellanicus,Species,16,2.934133334,8,8,Educacion
+Sprattus_fuegensis,Species,14,2.788332245,42,7,Identidad
+Sprattus_fuegensis,Species,14,2.788332245,42,5,Flujo de carbono
+Sprattus_fuegensis,Species,14,2.788332245,42,3,Biodiversidad
+Sprattus_fuegensis,Species,14,2.788332245,42,1,Pesca
+Strobilidium_sp,Species,11,3,12,5,Flujo de carbono
+Strombidinopsis_sp,Species,11,2,12,5,Flujo de carbono
+Strombidium_spp,Species,11,2,14,5,Flujo de carbono
+Synechococcus_sp,Species,11,1,7,5,Flujo de carbono
+Tedania_sp,Species,1,2,2,6,Secuestro de carbono
+Tedania_sp,Species,1,2,2,4,Biopurificacion
+Tedania_sp,Species,1,2,2,3,Biodiversidad
+Tedania_sp,Species,1,2,2,2,Materia prima
+Tetractinellida,Order,1,2.083333333,6,6,Secuestro de carbono
+Tetractinellida,Order,1,2.083333333,6,4,Biopurificacion
+Tetractinellida,Order,1,2.083333333,6,3,Biodiversidad
+Thouarella_spp,Species,4,2.35,14,6,Secuestro de carbono
+Thouarella_spp,Species,4,2.35,14,3,Biodiversidad
+Trophon_ohlini,Species,8,2.285714286,14,3,Biodiversidad
+Trophon_plicatus,Species,8,2.285714286,14,3,Biodiversidad
+Tulpa_tulipifera,Species,7,2,3,3,Biodiversidad
+Zygochlamys_patagonica,Species,9,2.142857143,18,3,Biodiversidad
