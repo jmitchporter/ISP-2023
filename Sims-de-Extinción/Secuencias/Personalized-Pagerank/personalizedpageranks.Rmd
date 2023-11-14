@@ -23,8 +23,8 @@ ESnet <- graph.data.frame(links_flip, directed = T, vertices = ESnodes)
 #run personalized pagerank for each individual ecosystem service
 #ES1 - fishing
 
-fishing <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 20,])), 0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
-fishing_SPP <- fishing[!(fishing$vertextype > 20),]
+fishing <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 1,0,0,0,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
+fishing_SPP <- fishing[!(fishing$vertextype > 30),]
 fishing_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="1", ESlinks$Prey,NA))
 fishing_direct <- c(na.omit(fishing_direct))
 fishing_support <- fishing_SPP[!(fishing_SPP$SpeciesID %in% fishing_direct$SpeciesID),]
@@ -35,8 +35,8 @@ write.csv(fishing_support,"./EPB_Indirect_Fishing.csv")
 
 #ES2 - primary materials
 
-primary_mat <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 20,])), 0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
-primary_mat_SPP <- primary_mat[!(primary_mat$vertextype > 20),]
+primary_mat <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 0,1,0,0,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
+primary_mat_SPP <- primary_mat[!(primary_mat$vertextype > 30),]
 primary_mat_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="2", ESlinks$Prey,NA))
 primary_mat_direct <- c(na.omit(primary_mat_direct))
 primary_mat_support <- primary_mat_SPP[!(primary_mat_SPP$SpeciesID %in% primary_mat_direct$SpeciesID),]
@@ -47,8 +47,8 @@ write.csv(primary_mat_support,"./EPB_Indirect_Primary_Mat.csv")
 
 #ES3 - biodiversity
 
-biodiversity <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 20,])), 0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
-biodiversity_SPP <- biodiversity[!(biodiversity$vertextype > 20),]
+biodiversity <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 0,0,1,0,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
+biodiversity_SPP <- biodiversity[!(biodiversity$vertextype > 30),]
 biodiversity_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="3", ESlinks$Prey,NA))
 biodiversity_direct <- c(na.omit(biodiversity_direct))
 biodiversity_support <- biodiversity_SPP[!(biodiversity_SPP$SpeciesID %in% biodiversity_direct$SpeciesID),]
@@ -59,8 +59,8 @@ write.csv(biodiversity_support,"./EPB_Indirect_Biodiversity.csv")
 
 #ES4 - biopurification
 
-biopurification <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 20,])), 0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
-biopurification_SPP <- biopurification[!(biopurification$vertextype > 20),]
+biopurification <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 0,0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
+biopurification_SPP <- biopurification[!(biopurification$vertextype > 30),]
 biopurification_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="4", ESlinks$Prey,NA))
 biopurification_direct <- c(na.omit(biopurification_direct))
 biopurification_support <- biopurification_SPP[!(biopurification_SPP$SpeciesID %in% biopurification_direct$SpeciesID),]
@@ -71,8 +71,8 @@ write.csv(biopurification_support,"./EPB_Indirect_Biopurification.csv")
 
 #ES5 - carbon flux
 
-carbon_flux <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 20,])), 0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
-carbon_flux_SPP <- carbon_flux[!(carbon_flux$vertextype > 20),]
+carbon_flux <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 0,0,0,0,1,0,0,0))$vector, vertextype=ESnodes$vertextype)
+carbon_flux_SPP <- carbon_flux[!(carbon_flux$vertextype > 30),]
 carbon_flux_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="5", ESlinks$Prey,NA))
 carbon_flux_direct <- c(na.omit(carbon_flux_direct))
 carbon_flux_support <- carbon_flux_SPP[!(carbon_flux_SPP$SpeciesID %in% carbon_flux_direct$SpeciesID),]
@@ -81,11 +81,23 @@ carbon_flux_support <- carbon_flux_support[order(-prob),] #ordered from high to 
 detach(carbon_flux_support)
 write.csv(carbon_flux_support,"./EPB_Indirect_Carbon_Flux.csv")
 
-#ES6 - identity and geopolitics
+#ES5 - carbon flux
 
-identity <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 20,])), 0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
-identity_SPP <- identity[!(identity$vertextype > 20),]
-identity_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="6", ESlinks$Prey,NA))
+carbon_seq <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 0,0,0,0,0,1,0,0))$vector, vertextype=ESnodes$vertextype)
+carbon_seq_SPP <- carbon_seq[!(carbon_seq$vertextype > 30),]
+carbon_seq_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="6", ESlinks$Prey,NA))
+carbon_seq_direct <- c(na.omit(carbon_seq_direct))
+carbon_seq_support <- carbon_seq_SPP[!(carbon_seq_SPP$SpeciesID %in% carbon_seq_direct$SpeciesID),]
+attach(carbon_seq_support)
+carbon_seq_support <- carbon_seq_support[order(-prob),] #ordered from high to low prob
+detach(carbon_seq_support)
+write.csv(carbon_seq_support,"./EPB_Indirect_Carbon_Seq.csv")
+
+#ES7 - identity
+
+identity <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 0,0,0,0,0,1,0,0))$vector, vertextype=ESnodes$vertextype)
+identity_SPP <- identity[!(identity$vertextype > 30),]
+identity_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="7", ESlinks$Prey,NA))
 identity_direct <- c(na.omit(identity_direct))
 identity_support <- identity_SPP[!(identity_SPP$SpeciesID %in% identity_direct$SpeciesID),]
 attach(identity_support)
@@ -93,11 +105,11 @@ identity_support <- identity_support[order(-prob),] #ordered from high to low pr
 detach(identity_support)
 write.csv(identity_support,"./EPB_Indirect_Identity.csv")
 
-#ES7 - education & research
+#ES8 - education & research
 
-education <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 20,])), 0,0,1,0,0,0,0))$vector, vertextype=ESnodes$vertextype)
-education_SPP <- education[!(education$vertextype > 20),]
-education_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="7", ESlinks$Prey,NA))
+education <- data.frame(SpeciesID=ESnodes$Species, prob=page_rank(graph=ESnet, damping = 0.85, directed = T, personalized = c(rep(0,times=nrow(ESnodes)-nrow(ESnodes[ESnodes$vertextype > 30,])), 0,0,0,0,0,0,0,1))$vector, vertextype=ESnodes$vertextype)
+education_SPP <- education[!(education$vertextype > 30),]
+education_direct <- data.frame(SpeciesID = ifelse(ESlinks$edgetype=="8", ESlinks$Prey,NA))
 education_direct <- c(na.omit(education_direct))
 education_support <- education_SPP[!(education_SPP$SpeciesID %in% education_direct$SpeciesID),]
 attach(education_support)
@@ -107,7 +119,7 @@ write.csv(education_support,"./EPB_Indirect_Education.csv")
 
 #calculating aggregate probability
 
-all_support <- rbind(education_support,identity_support,carbon_flux_support,biopurification_support,biodiversity_support,primary_mat_support,fishing_support)
+all_support <- rbind(education_support,identity_support,carbon_seq_support,carbon_flux_support,biopurification_support,biodiversity_support,primary_mat_support,fishing_support)
 all_support$SpeciesID <- as.factor(all_support$SpeciesID)
 mean_support <- aggregate(prob ~ SpeciesID, all_support, mean) # calculate mean prob. for each spp.
 
@@ -116,5 +128,4 @@ mean_support <- mean_support[order(-prob),]
 detach(mean_support)
 
 write.csv(mean_support, "EPB_IndirectAll.csv")
-
 ```
