@@ -76,8 +76,8 @@ Work with isolated ES providers
 ES_list <- read_csv("ESProvidersList.csv")
 
 #boxplots
-boxplot(tl~SE_num,data=ES_list, xlab="Servicio Ecosistémico", ylab="Nivel Trófico")
-boxplot(conn~SE_num,data=ES_list, xlab="Servicio Ecosistémico", ylab="Cantidad de Conexiones")
+ES_list %>% mutate(ES_Name = fct_reorder(ES_Name, EcosystemService_Num)) %>% ggplot(aes(x = ES_Name, y = tl, fill=ES_Name)) + geom_boxplot() + geom_jitter() + theme_classic() + theme(axis.title.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank()) + xlab(NULL) + ylab("Nivel trófico") + guides(fill=guide_legend(title="Servicio Ecosistémico"))
+ES_list %>% mutate(ES_Name = fct_reorder(ES_Name, EcosystemService_Num)) %>% ggplot(aes(x = ES_Name, y = conn, fill=ES_Name)) + geom_boxplot() + geom_jitter() + theme_classic() + theme(axis.title.x = element_blank(), axis.text.x = element_blank(), axis.ticks.x = element_blank()) + xlab(NULL) + ylab("Cantidad de Conexiones") + guides(fill=guide_legend(title="Servicio Ecosistémico"))
 ```
 
 ```{r}
