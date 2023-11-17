@@ -1,0 +1,52 @@
+---
+title: "Extinction Sims"
+author: "Mitch Porter"
+date: "2023-11-14"
+output: html_document
+---
+
+```{r setup}
+# adapted from Keyes, et al, 2021, code by Allison Barner
+# load packages
+library(tidyverse)
+library(igraph)
+library(dplyr)
+library(stringi)
+library(NetworkExtinction)
+
+# load data
+ESnodes <- read.csv("./ESBurdwoodSpeciesList.csv")
+ESlinks <- read.csv("./ESInteractionList_Burdwood.csv") 
+indirect_spp <- read.csv("IndirectAll.csv", header=T)
+service_nodes <- c(31,32,33,34,35,36,37,38) # for tracking in ES robustness calculation 
+
+nodes_spp <- subset(ESnodes, ESnodes$vertextype < 30) # exclude ES from node list 
+links_spp <- subset(ESlinks, ESlinks$edgetype == 0) # subset interactions to remove all ES links
+
+ESnet <- graph.data.frame(ESlinks, directed = T, vertices = ESnodes)
+spp_net <- graph.data.frame(links_spp, directed = T, vertices = nodes_spp)
+
+spp_net <- simplify(spp_net, remove.loops = T)
+ESnet <- simplify(ESnet, remove.loops=T)
+
+ESmat <- as_adjacency_matrix(ESnet, sparse = FALSE, attr = NULL) 
+spp_mat <- as_adjacency_matrix(spp_net, sparse = FALSE) 
+class(spp_mat)
+
+indirect_seq <- indirect_spp[,1]
+direct_spp <- subset(ESlinks, ESlinks$edgetype > 0)
+direct_spp <- as.data.frame(direct_spp[,1])
+colnames(direct_spp)[colnames(direct_spp)=="direct[, 1]"] <- "Species" #reeval
+direct_spp <- distinct(direct_spp)
+direct_rand_seq <- direct_spp$SpeciesID
+
+#ignore:
+resources <- data.frame(SpeciesID = nodes_spp$Species, InDegree = igraph::degree(spp_net, mode="in"))
+susc_spp <- resources[resources$InDegree>0,]
+basal_spp <- resources[resources$InDegree==0,]
+tot_susc <- nrow(susc_spp)
+basal_mat <- colnames(spp_mat)
+
+SimulateExtinctions(spp_mat, Method = "Ordered", Order = indirect_seq)
+
+```
