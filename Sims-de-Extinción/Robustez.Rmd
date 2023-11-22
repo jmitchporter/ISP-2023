@@ -1,0 +1,83 @@
+---
+title: "Robustez"
+author: "Mitch Porter"
+date: "2023-11-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(igraph)
+library(tidyverse)
+library(multiweb)
+library(DescTools)
+library(ggplot2)
+
+# species only subset
+SPPnodes <- subset(ESnodes, ESnodes$vertextype < 30) # exclude ES from node list 
+SPPlinks <- subset(ESlinks, ESlinks$edgetype == 0) # subset interactions to remove all ES links
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes) # as graph
+
+#species robustness
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+basal <- count(producers)
+basal <- as.integer(basal)
+ES <- subset(ESnodes, ESnodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+ES <- length(ES)
+all <- as.vector(SPPnodes[,1])
+all <- length(all)
+spp <- all - ES
+susc <- all-basal
+
+stats_spp1$prop_surv <- (susc - stats_spp1$sec_ext)/susc
+stats_spp1$prop_ext <- 1-((spp-stats_spp1$pri_ext)/spp)
+AUC_spp1 <- AUC(stats_spp1$prop_ext, stats_spp1$prop_surv, from = min(0), to = max(max(stats_spp1$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_spp2$prop_surv <- (susc-stats_spp2$sec_ext)/susc
+stats_spp2$prop_ext <- 1-((spp-stats_spp2$pri_ext)/spp)
+AUC_spp2 <- AUC(stats_spp2$prop_ext, stats_spp2$prop_surv, from = min(0), to = max(max(stats_spp2$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_spp3$prop_surv <- (susc-stats_spp3$sec_ext)/susc
+stats_spp3$prop_ext <- 1-((length(support_seqSPP)-stats_spp3$pri_ext)/length(support_seqSPP))
+AUC_spp3 <- AUC(stats_spp3$prop_ext, stats_spp3$prop_surv, from = min(0), to = max(max(stats_spp3$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_spp4$prop_surv <- (susc-stats_spp4$sec_ext)/susc
+stats_spp4$prop_ext <- 1-((length(support_seqSPP)-stats_spp4$pri_ext)/length(support_seqSPP))
+AUC_spp4 <- AUC(stats_spp4$prop_ext, stats_spp4$prop_surv, from = min(0), to = max(max(stats_spp4$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_spp5$prop_surv <- (susc-stats_spp5$sec_ext)/susc
+stats_spp5$prop_ext <- 1-((length(provider_seqSPP)-stats_spp5$pri_ext)/length(provider_seqSPP))
+AUC_spp5 <- AUC(stats_spp5$prop_ext, stats_spp5$prop_surv, from = min(0), to = max(max(stats_spp5$prop_ext)), method = c("spline"), absolutearea = FALSE)
+
+#ES robustness
+stats_ES1$prop_surv <- (8-stats_ES1$X0L)/8
+stats_ES1$prop_ext <- 1-(all-stats_ES1$pri_ext)/all
+AUC_ES1 <- AUC(stats_ES1$prop_ext, stats_ES1$prop_surv, from = min(0), to = max(max(stats_ES1$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_ES2$prop_surv <- (8-stats_ES2$X0L)/8
+stats_ES2$prop_ext <- 1-(all-stats_ES2$pri_ext)/all
+AUC_ES2 <- AUC(stats_ES2$prop_ext, stats_ES2$prop_surv, from = min(0), to = max(max(stats_ES2$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_ES3$prop_surv <- (8-stats_ES3$X0L)/8
+stats_ES3$prop_ext <- 1-(((length(support_seq)-stats_ES3$pri_ext)/(length(support_seq))))
+AUC_ES3 <- AUC(stats_ES3$prop_ext, stats_ES3$prop_surv, from = min(0), to = max(max(stats_ES3$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_ES4$prop_surv <- (8-stats_ES4$X0L)/8
+stats_ES4$prop_ext <- 1-(((length(support_seq)-stats_ES4$pri_ext)/(length(support_seq))))
+AUC_ES4 <- AUC(stats_ES4$prop_ext, stats_ES4$prop_surv, from = min(0), to = max(max(stats_ES4$prop_ext)), method = c("spline"), absolutearea = FALSE)
+stats_ES5$prop_surv <- (8-stats_ES5$X0L)/8
+stats_ES5$prop_ext <- 1-(((length(provider_seq)-stats_ES5$pri_ext)/(length(provider_seq))))
+AUC_ES5 <- AUC(stats_ES5$prop_ext, stats_ES5$prop_surv, from = min(0), to = max(max(stats_ES5$prop_ext)), method = c("spline"), absolutearea = FALSE)
+
+
+#graphing
+stats_spp <- cbind(stats_spp1$prop_ext, stats_spp1$prop_surv, stats_spp2$prop_ext, stats_spp2$prop_surv, stats_spp3$prop_ext, stats_spp3$prop_surv, stats_spp4$prop_ext, stats_spp4$prop_surv, stats_spp5$prop_ext, stats_spp5$prop_surv)
+stats_spp <- as.data.frame(stats_spp)
+colnames(stats_spp) <- c("spp1ext", "spp1surv", "spp2ext", "spp2surv", "spp3ext", "spp3surv", "spp4ext", "spp4surv", "spp5ext", "spp5surv")
+ggplot(stats_spp) + geom_line(aes(x = spp1ext, y = spp1surv, color = "De menor a mayor conexión")) + geom_line(aes(x = spp2ext, y = spp2surv, color = "De mayor a menor conexión")) + geom_line(aes(x = spp3ext, y = spp3surv, color = "Especies de apoyo, de mayor a menor importancia")) + geom_line(aes(x = spp4ext, y = spp4surv, color = "Especies de apoyo, de manera aleatoria")) + geom_line(aes(x = spp5ext, y = spp5surv, color = "Proveedores de SEs, de manera aleatoria")) + ylim(c(0,1)) + xlim(c(0,1)) + theme_classic() + ylab("Proporción de especies susceptibles que no se extinguen secundariamente") + xlab("Proporción de especies sacadas por la secuencia de extinción") + guides(color=guide_legend(title="Tipo de secuencia"))
+
+stats_ES <- cbind(stats_ES1$prop_ext, stats_ES1$prop_surv, stats_ES2$prop_ext, stats_ES2$prop_surv, stats_ES3$prop_ext, stats_ES3$prop_surv, stats_ES4$prop_ext, stats_ES4$prop_surv, stats_ES5$prop_ext, stats_ES5$prop_surv)
+stats_ES <- as.data.frame(stats_ES)
+colnames(stats_ES) <- c("ES1ext", "ES1surv", "ES2ext", "ES2surv", "ES3ext", "ES3surv", "ES4ext", "ES4surv", "ES5ext", "ES5surv")
+ggplot(stats_ES) + geom_line(aes(x = ES1ext, y = ES1surv, color = "De menor a mayor conexión")) + geom_line(aes(x = ES2ext, y = ES2surv, color = "De mayor a menor conexión")) + geom_line(aes(x = ES3ext, y = ES3surv, color = "Especies de apoyo, de mayor a menor importancia")) + geom_line(aes(x = ES4ext, y = ES4surv, color = "Especies de apoyo, de manera aleatoria")) + geom_line(aes(x = ES5ext, y = ES5surv, color = "Proveedores de SEs, de manera aleatoria")) + ylim(c(0,1)) + xlim(c(0,1)) + theme_classic() + ylab("Proporción de servicios ecosistémicos no perdidos") + xlab("Proporción de especies sacadas por la secuencia de extinción") + guides(color=guide_legend(title="Tipo de secuencia"))
+
+AUC_ES <- c(AUC_ES1, AUC_ES2, AUC_ES3, AUC_ES4, AUC_ES5)
+AUC_spp <- c(AUC_spp1, AUC_spp2, AUC_spp3, AUC_spp4, AUC_spp5)
+Secuencia <- c("De menor a mayor conexión", "De mayor a menor conexión", "Especies de apoyo, de mayor a menor importancia", "Especies de apoyo, de manera aleatoria", "Proveedores de SEs, de manera aleatoria")
+AUCs <- data.frame(AUC_ES, AUC_spp, Secuencia)
+ggplot(AUCs, aes(AUC_spp, AUC_ES)) + geom_point() + ylim(c(0,1)) + xlim(c(0,1)) + ylab("Proporción de servicios ecosistémicos no perdidos") + xlab("Proporción de especies sacadas por la secuencia de extinción") + geom_smooth(method = "lm") + theme_classic()
+```

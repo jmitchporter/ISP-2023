@@ -1,0 +1,170 @@
+---
+title: "RandomSims"
+author: "Mitch Porter"
+date: "2023-11-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#load data
+ESnodes <- read.csv("./ESBurdwoodSpeciesList.csv")
+ESlinks <- read.csv("./ESInteractionList_Burdwood.csv")
+producers <- read.csv("./producers.csv")
+```
+
+
+```{r}
+#begin randomization
+for (r in 1:200){
+producers <- as.vector(producers[,1])
+ES <- subset(ESnodes, ESnodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+sym_diff <- function(a,b) unique(c(setdiff(a,b), setdiff(b,a)))
+all <- as.vector(ESnodes[,1])
+SPPnodes <- subset(ESnodes, ESnodes$vertextype < 30) # exclude ES from node list 
+SPPlinks <- subset(ESlinks, ESlinks$edgetype == 0) # subset interactions to remove all ES links
+net_ran <- data.frame()
+
+ran_seq_spp <- sym_diff(all, ES)
+ran_seq_spp <- sample(ran_seq_spp, length(ran_seq_spp), replace = FALSE)
+ran_seq <- c(ran_seq_spp, ES)
+
+ESnodes_ran <- ESnodes[match(ran_seq, ESnodes$Species), ]
+ESnet_ran <- graph.data.frame(ESlinks, directed = T, vertices = ESnodes_ran) #as graph
+ESmat_ran <- as_adjacency_matrix(ESnet_ran, sparse = FALSE, attr = NULL) #as matrix
+ESnet_ran <- as.data.frame(ESmat_ran) #as df
+SPPnodes_ran <- SPPnodes[match(ran_seq_spp, SPPnodes$Species), ]
+SPPnet_ran <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes_ran)
+SPPmat_ran <- as_adjacency_matrix(SPPnet_ran, sparse = FALSE, attr = NULL)
+SPPnet_ran <- as.data.frame(SPPmat_ran)
+
+ESred <- ESnet_ran
+SPPred <- SPPnet_ran
+
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes) # as graph
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+N <-length(producers)
+ES_Net<-list()
+ESS <- length(ESred)
+SPP_Net<-list()
+SPPS <- length(SPPred)
+
+#ESthresholdvector
+  thresh<- 1/10
+  NumPrey <-rep(0,ESS)
+  vectorthresh <- as.data.frame(NumPrey,row.names=names(ESred))
+  #thresh <- 1-thresh
+  for (b in 1:ESS) {
+    vectorthresh[b,1] <- sum(ESred[,b])}
+  vectorthresh <- (vectorthresh*thresh)
+  vectorthresh <- as.vector(vectorthresh[,1])
+  ES_net<-list()
+  A <- rbind(ESred,vectorthresh)
+  for (x in 1:ESS){
+    if(length(A)>9 & sum(A)!=0){ #mayor a 9 porque Vane habia puesto un corte del 10%
+      B <- A[-1,]
+      A <- B[,-1]
+      repeat {
+        if (length(A) > 1){
+          a <- vector("integer",0)
+          for (l in 1:length(A)) {
+            z <- vector("logical",0)
+            for (k in 1:N) {z <- c(z, names(A)[l] == producers[k])}
+          if ((sum((A[-(length(A)+1),])[,l]) <= A[(length(A)+1),l]) & !any(z)){
+            a <- c(a,l)}}
+        if (length(a)>0){
+          A <- A[-a,]
+          A <- A[,-a]
+          } else {
+            # m<-A[-(length(A)+1),]
+            break}}}
+      m<-A[-(length(A)+1),]
+      ES_net[[x]] <-m
+      }} #de la ext primaria
+
+#SPPthresholdvector
+  thresh<- 1/10
+  NumPrey <-rep(0,SPPS)
+  vectorthresh <- as.data.frame(NumPrey,row.names=names(SPPred))
+  #thresh <- 1-thresh
+  for (b in 1:SPPS) {
+    vectorthresh[b,1] <- sum(SPPred[,b])}
+  vectorthresh <- (vectorthresh*thresh)
+  vectorthresh <- as.vector(vectorthresh[,1])
+  SPP_net<-list()
+  A <- rbind(SPPred,vectorthresh)
+  for (x in 1:SPPS){
+    if(length(A)>9 & sum(A)!=0){ #mayor a 9 porque Vane habia puesto un corte del 10%
+      B <- A[-1,]
+      A <- B[,-1]
+      repeat {
+        if (length(A) > 1){
+          a <- vector("integer",0)
+          for (l in 1:length(A)) {
+            z <- vector("logical",0)
+            for (k in 1:N) {z <- c(z, names(A)[l] == producers[k])}
+          if ((sum((A[-(length(A)+1),])[,l]) <= A[(length(A)+1),l]) & !any(z)){
+            a <- c(a,l)}}
+        if (length(a)>0){
+          A <- A[-a,]
+          A <- A[,-a]
+          } else {
+            # m<-A[-(length(A)+1),]
+            break}}}
+      m<-A[-(length(A)+1),]
+      SPP_net[[x]] <- m
+      }} #de la ext primaria
+
+#create robustness curve vectors
+
+
+#ES
+ESnet_ran<- data.frame()
+for (i in 1:length(ES_net)){
+  species <- as.data.frame(ES_net[[i]])
+  species <- names(species)
+  species_diff <- intersect(ES,species)
+  ES_lost <- (length(ES)-length(species_diff))
+  ESnet_ran <- rbind(ESnet_ran, ES_lost)
+}
+colnames(ESnet_ran)[1] ="ES_lost"
+ESnet_ran$pri_ext <- 1:nrow(ESnet_ran)
+
+#species
+SPPnet_ran<- data.frame()
+for (i in 1:length(SPP_net)){
+  count<-count(SPP_net[[i]])
+  SPPnet_ran <- rbind(SPPnet_ran, count)
+}
+SPPnet_ran$pri_ext <- 1:nrow(SPPnet_ran)
+SPPnet_ran$sec_ext <- (((SPPnet_ran[1,1]+1) - SPPnet_ran$pri_ext) - SPPnet_ran$n)
+
+#AUC calculations
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+basal <- count(producers)
+basal <- as.integer(basal)
+ES <- subset(ESnodes, ESnodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+ES <- length(ES)
+all <- as.vector(SPPnodes[,1])
+all <- length(all)
+spp <- all - ES
+susc <- all-basal
+
+#species
+SPPnet_ran$prop_surv <- (susc - SPPnet_ran$sec_ext)/susc
+SPPnet_ran$prop_ext <- 1-((spp-SPPnet_ran$pri_ext)/spp)
+AUCSPP <- AUC(SPPnet_ran$prop_ext, SPPnet_ran$prop_surv, from = min(min(SPPnet_ran$prop_ext)), to = max(max(SPPnet_ran$prop_ext)), method = c("spline"), absolutearea = FALSE)
+
+#ES
+ESnet_ran$prop_surv <- (8 - ESnet_ran$ES_lost)/8
+ESnet_ran$prop_ext <- 1-(all-ESnet_ran$pri_ext)/all
+AUCES <- AUC(ESnet_ran$prop_ext, ESnet_ran$prop_surv, from = min(min(ESnet_ran$prop_ext)), to = max(ESnet_ran$prop_ext), method = c("spline"), absolutearea = FALSE)
+
+net_ranr <- rbind(net_ranr, r)
+net_ranAUCES <- rbind(net_ranAUCES, AUCES)
+net_ranAUCSPP <- rbind(net_ranAUCSPP, AUCSPP)
+}
+```
