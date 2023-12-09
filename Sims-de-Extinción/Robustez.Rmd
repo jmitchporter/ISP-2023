@@ -1,0 +1,151 @@
+---
+title: "Robustez"
+author: "Mitch Porter"
+date: "2023-11-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#cargar paquetes
+library(igraph)
+library(tidyverse)
+library(multiweb)
+library(DescTools)
+library(ggplot2)
+
+#cargar datos
+load("./Simulaciones.RData")
+load("./RandomSims.RData")
+nodes <- read.csv("./ESBurdwoodSpeciesList.csv")
+ESlinks <- read.csv("./ESInteractionList_Burdwood.csv")
+```
+
+```{r}
+# red de sólo especies
+SPPnodes <- subset(nodes, nodes$vertextype < 30)
+SPPlinks <- subset(ESlinks, ESlinks$edgetype == 0) 
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes) 
+
+#calculación de robustez
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+basal <- count(producers)
+basal <- as.integer(basal)
+ES <- subset(nodes, nodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+all <- as.vector(SPPnodes[,1])
+ESall <- length(all) + length(ES)
+susc <- length(all)-basal
+
+#para cada secuencia para la red trófica
+stats_spp1$prop_surv <- (susc - stats_spp1$sec_ext)/susc
+stats_spp1$prop_ext2 <- stats_spp1$pri_ext/length(all)
+stats_spp1 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp1)
+AUC_spp1 <- AUC(stats_spp1$prop_ext, stats_spp1$prop_surv, from = min(min(stats_spp1$prop_ext)), to = max(max(stats_spp1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp2$prop_surv <- (susc-stats_spp2$sec_ext)/susc
+stats_spp2$prop_ext <- stats_spp2$pri_ext/length(all)
+stats_spp2 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp2)
+AUC_spp2 <- AUC(stats_spp2$prop_ext, stats_spp2$prop_surv, from = min(min(stats_spp2$prop_ext)), to = max(max(stats_spp2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp3$prop_surv <- (susc-stats_spp3$sec_ext)/susc
+stats_spp3$prop_ext <- stats_spp3$pri_ext/length(supporters)
+stats_spp3 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp3)
+AUC_spp3 <- AUC(stats_spp3$prop_ext, stats_spp3$prop_surv, from = min(min(stats_spp3$prop_ext)), to = max(max(stats_spp3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp4$prop_surv <- (susc-stats_spp4$sec_ext)/susc
+stats_spp4$prop_ext <- stats_spp4$pri_ext/length(supporters)
+stats_spp4 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp4)
+AUC_spp4 <- AUC(stats_spp4$prop_ext, stats_spp4$prop_surv, from = min(min(stats_spp4$prop_ext)), to = max(max(stats_spp4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp5$prop_surv <- (susc-stats_spp5$sec_ext)/susc
+stats_spp5$prop_ext <- stats_spp5$pri_ext/length(supporters)
+stats_spp5 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp5)
+AUC_spp5 <- AUC(stats_spp5$prop_ext, stats_spp5$prop_surv, from = min(min(stats_spp5$prop_ext)), to = max(max(stats_spp5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp6$prop_surv <- (susc-stats_spp6$sec_ext)/susc
+stats_spp6$prop_ext <- stats_spp6$pri_ext/length(providers)
+stats_spp6 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp6)
+AUC_spp6 <- AUC(stats_spp6$prop_ext, stats_spp6$prop_surv, from = min(min(stats_spp6$prop_ext)), to = max(max(stats_spp6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp7$prop_surv <- (susc-stats_spp7$sec_ext)/susc
+stats_spp7$prop_ext <- stats_spp7$pri_ext/length(all)
+stats_spp7 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp7)
+AUC_spp7 <- AUC(stats_spp7$prop_ext, stats_spp7$prop_surv, from = min(min(stats_spp7$prop_ext)), to = max(max(stats_spp7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_spp8$prop_surv <- (susc-stats_spp8$sec_ext)/susc
+stats_spp8$prop_ext <- stats_spp8$pri_ext/length(all)
+stats_spp8 <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), stats_spp8)
+AUC_spp8 <- AUC(stats_spp8$prop_ext, stats_spp8$prop_surv, from = min(min(stats_spp8$prop_ext)), to = max(max(stats_spp8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+
+#para cada secuencia para los servicios
+stats_ES1$prop_surv <- (8-stats_ES1$X0L)/8
+stats_ES1$prop_ext <- stats_ES1$pri_ext/ESall
+stats_ES1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES1)+1, prop_surv = 1, prop_ext = 0), stats_ES1)
+AUC_ES1 <- AUC(stats_ES1$prop_ext, stats_ES1$prop_surv, from = min(min(stats_ES1$prop_ext)), to = max(max(stats_ES1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES2$prop_surv <- (8-stats_ES2$X0L)/8
+stats_ES2$prop_ext <- stats_ES2$pri_ext/ESall
+stats_ES2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES2)+1, prop_surv = 1, prop_ext = 0), stats_ES2)
+AUC_ES2 <- AUC(stats_ES2$prop_ext, stats_ES2$prop_surv, from = min(min(stats_ES2$prop_ext)), to = max(max(stats_ES2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES3$prop_surv <- (8-stats_ES3$X0L)/8
+stats_ES3$prop_ext <- stats_ES3$pri_ext/length(supporters)
+stats_ES3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES3)+1, prop_surv = 1, prop_ext = 0), stats_ES3)
+AUC_ES3 <- AUC(stats_ES3$prop_ext, stats_ES3$prop_surv, from = min((min(stats_ES3$prop_ext))), to = max(max(stats_ES3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES4$prop_surv <- (8-stats_ES4$X0L)/8
+stats_ES4$prop_ext <- stats_ES4$pri_ext/length(supporters)
+stats_ES4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES4)+1, prop_surv = 1, prop_ext = 0), stats_ES4)
+AUC_ES4 <- AUC(stats_ES4$prop_ext, stats_ES4$prop_surv, from = min((min(stats_ES4$prop_ext))), to = max(max(stats_ES4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES5$prop_surv <- (8-stats_ES5$X0L)/8
+stats_ES5$prop_ext <- stats_ES5$pri_ext/length(supporters)
+stats_ES5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES5)+1, prop_surv = 1, prop_ext = 0), stats_ES5)
+AUC_ES5 <- AUC(stats_ES5$prop_ext, stats_ES5$prop_surv, from = min((min(stats_ES5$prop_ext))), to = max(max(stats_ES5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES6$prop_surv <- (8-stats_ES6$X0L)/8
+stats_ES6$prop_ext <- stats_ES6$pri_ext/length(providers)
+stats_ES6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES6)+1, prop_surv = 1, prop_ext = 0), stats_ES6)
+AUC_ES6 <- AUC(stats_ES6$prop_ext, stats_ES6$prop_surv, from = min((min(stats_ES6$prop_ext))), to = max(max(stats_ES6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES7$prop_surv <- (8-stats_ES7$X0L)/8
+stats_ES7$prop_ext <- stats_ES7$pri_ext/ESall
+stats_ES7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES7)+1, prop_surv = 1, prop_ext = 0), stats_ES7)
+AUC_ES7 <- AUC(stats_ES7$prop_ext, stats_ES7$prop_surv, from = min((min(stats_ES7$prop_ext))), to = max(max(stats_ES7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+stats_ES8$prop_surv <- (8-stats_ES8$X0L)/8
+stats_ES8$prop_ext <- stats_ES8$pri_ext/ESall
+stats_ES8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_ES8)+1, prop_surv = 1, prop_ext = 0), stats_ES8)
+AUC_ES8 <- AUC(stats_ES8$prop_ext, stats_ES8$prop_surv, from = min((min(stats_ES8$prop_ext))), to = max(max(stats_ES8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+```
+
+```{r}
+#creación de gráficos
+#curvas de la red trófica
+stats_spp <- cbind(stats_spp1$prop_ext, stats_spp1$prop_surv, stats_spp2$prop_ext, stats_spp2$prop_surv, stats_spp3$prop_ext, stats_spp3$prop_surv, stats_spp4$prop_ext, stats_spp4$prop_surv, stats_spp5$prop_ext, stats_spp5$prop_surv, stats_spp6$prop_ext, stats_spp6$prop_surv, stats_spp7$prop_ext, stats_spp7$prop_surv, stats_spp8$prop_ext, stats_spp8$prop_surv)
+stats_spp <- as.data.frame(stats_spp)
+colnames(stats_spp) <- c("spp1ext", "spp1surv", "spp2ext", "spp2surv", "spp3ext", "spp3surv", "spp4ext", "spp4surv", "spp5ext", "spp5surv", "spp6ext", "spp6surv", "spp7ext", "spp7surv", "spp8ext", "spp8surv")
+ggplot(stats_spp) + geom_line(aes(x = spp1ext, y = spp1surv, color = "De menor a mayor cantidad de interacciones")) + geom_line(aes(x = spp2ext, y = spp2surv, color = "De mayor a menor cantidad de interacciones")) + geom_line(aes(x = spp3ext, y = spp3surv, color = "Especies de apoyo, de mayor a menor importancia")) + geom_line(aes(x = spp4ext, y = spp4surv, color = "Especies de apoyo, de menor a mayor importancia")) + geom_line(aes(x = spp5ext, y = spp5surv, color = "Especies de apoyo, de manera aleatoria")) + geom_line(aes(x = spp6ext, y = spp6surv, color = "Proveedores de SEs, de manera aleatoria")) + geom_line(aes(x = spp7ext, y = spp7surv, color = "Conectores dentro módulos tróficos")) + geom_line(aes(x = spp8ext, y = spp8surv, color = "Conectores entre módulos tróficos")) + ylim(c(0,1)) + ylim(c(0,1)) + xlim(c(0,1)) + theme_classic() + ylab("Proporción de especies susceptibles que no se extinguen") + xlab("Proporción de especies eliminadas por la secuencia de extinción") + guides(color=guide_legend(title="Tipo de secuencia"))
+
+#curvas de los SEs
+stats_ES <- cbind(stats_ES1$prop_ext, stats_ES1$prop_surv, stats_ES2$prop_ext, stats_ES2$prop_surv, stats_ES3$prop_ext, stats_ES3$prop_surv, stats_ES4$prop_ext, stats_ES4$prop_surv, stats_ES5$prop_ext, stats_ES5$prop_surv, stats_ES6$prop_ext, stats_ES6$prop_surv, stats_ES7$prop_ext, stats_ES7$prop_surv, stats_ES8$prop_ext, stats_ES8$prop_surv)
+stats_ES <- as.data.frame(stats_ES)
+colnames(stats_ES) <- c("ES1ext", "ES1surv", "ES2ext", "ES2surv", "ES3ext", "ES3surv", "ES4ext", "ES4surv", "ES5ext", "ES5surv", "ES6ext", "ES6surv", "ES7ext", "ES7surv", "ES8ext", "ES8surv")
+ggplot(stats_ES) + geom_line(aes(x = ES1ext, y = ES1surv, color = "De menor a mayor cantidad de interacciones")) + geom_line(aes(x = ES2ext, y = ES2surv, color = "De mayor a menor cantidad de interacciones")) + geom_line(aes(x = ES3ext, y = ES3surv, color = "Especies de apoyo, de mayor a menor importancia")) + geom_line(aes(x = ES4ext, y = ES4surv, color = "Especies de apoyo, de menor a mayor importancia")) + geom_line(aes(x = ES5ext, y = ES5surv, color = "Especies de apoyo, de manera aleatoria")) + geom_line(aes(x = ES6ext, y = ES6surv, color = "Proveedores de SEs, de manera aleatoria")) + geom_line(aes(x = ES7ext, y = ES7surv, color = "Conectores dentro módulos tróficos")) + geom_line(aes(x = ES8ext, y = ES8surv, color = "Conectores entre módulos tróficos")) + ylim(c(0,1)) + ylim(c(0,1)) + xlim(c(0,1)) + theme_classic() + ylab("Proporción de servicios ecosistémicos que permanecen") + xlab("Proporción de especies eliminadas por la secuencia de extinción") + guides(color=guide_legend(title="Tipo de secuencia"))
+```
+
+```{r}
+#calculacion de correlaciones
+AUC_ES <- c(AUC_ES1, AUC_ES2, AUC_ES3, AUC_ES4, AUC_ES5, AUC_ES6, AUC_ES7, AUC_ES8)
+AUC_spp <- c(AUC_spp1, AUC_spp2, AUC_spp3, AUC_spp4, AUC_spp5, AUC_spp6, AUC_spp7, AUC_spp8)
+Secuencia <- c("De menor a mayor cantidad de interacciones", "De mayor a menor cantidad de interacciones", "Especies de apoyo, de mayor a menor importancia", "Especies de apoyo, de menor a mayor importancia", "Especies de apoyo, de manera aleatoria", "Proveedores de SEs, de manera aleatoria", "Conectores dentro módulos tróficos", "Conectores entre módulos tróficos")
+AUCs <- data.frame(AUC_ES, AUC_spp, Secuencia)
+AUCs <- rbind(AUCs, minran, maxran, meanran)
+
+#ordeneamiento de secuencias
+tipo <- c("Enfocada en especies tróficas", "Enfocada en especies tróficas", "Enfocada en servicios", "Enfocada en servicios","Enfocada en servicios","Enfocada en servicios","Enfocada en especies tróficas","Enfocada en especies tróficas","Enfocada en especies tróficas","Enfocada en especies tróficas","Enfocada en especies tróficas")
+AUCs <- cbind(AUCs, tipo)
+
+#regresion linear
+AUCs$AUC_ES <- as.numeric(AUCs$AUC_ES)
+AUCs$AUC_spp <- as.numeric(AUCs$AUC_spp)
+lm(AUCs$AUC_ES ~ AUCs$AUC_spp) 
+
+#creacion del gráfico
+ggplot(AUCs, aes(x = AUC_spp, y = AUC_ES,  color = Secuencia, shape = tipo)) + geom_point(size = 3) + geom_abline(intercept = 0.1584, slope = 0.8072 , color = "gray50", linewidth = 0.5) + ylim(c(0,1)) + xlim(c(0,1)) + ylab("Robustez de los servicios ecosistémicos") + xlab("Robustez de la red trófica") + geom_smooth(method = "lm") + theme_classic() + scale_shape_manual(values=c("Enfocada en especies tróficas"=16,"Enfocada en servicios"=15)) + labs(color = "Secuencia de extinción", shape = "Clase de secuencia")
+
+#pruebas de correlacion
+cor.test(AUCs$AUC_spp, AUCs$AUC_ES, method = "spearman") #correlacion total
+AUC_eet <- AUCs[c(1,2,7,8,9,10,11),]  #correlacion de secuencias enfocadas en especies tróficas
+cor.test(AUC_eet$AUC_spp, AUC_eet$AUC_ES, method = "spearman")
+AUC_es <- AUCs[c(3,4,5,6),]  #correlacion de secuencias enfocadas en servicios
+cor.test(AUC_es$AUC_spp, AUC_es$AUC_ES, method = "spearman")
+```

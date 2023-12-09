@@ -1,0 +1,194 @@
+---
+title: "RandomSims"
+author: "Mitch Porter"
+date: "2023-11-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#cargar datos
+ESnodes <- read.csv("./ESBurdwoodSpeciesList.csv")
+ESlinks <- read.csv("./ESInteractionList_Burdwood.csv")
+producers <- read.csv("./producers.csv")
+
+#cargar paquetes
+library(igraph)
+library(tidyverse)
+library(multiweb)
+library(DescTools)
+library(ggplot2)
+
+#crear cuadros de datos
+net_ranr <- data.frame()
+net_ranAUCES <- data.frame()
+net_ranAUCSPP <- data.frame()
+```
+
+
+```{r}
+#arrancar con aleatorización
+ES <- subset(nodes, nodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+all <- as.vector(nodes[,1])
+SPPnodes <- subset(nodes, nodes$vertextype < 30) #remover interacciones de SEs
+SPPlinks <- subset(ESlinks, ESlinks$edgetype == 0) #remover interacciones de SEs
+
+#crear secuencia
+ran_seq_spp <- all[! all %in% ES] 
+
+#empezar for loop
+for(r in 1:100){
+net_ran <- data.frame()
+ran_seq_spp <- sample(ran_seq_spp, length(ran_seq_spp), replace = FALSE) #aleatorización
+ran_seq <- c(ran_seq_spp, ES)
+
+ESnodes_ran <- nodes[match(ran_seq, nodes$Species), ]
+ESnet_ran <- graph.data.frame(ESlinks, directed = T, vertices = ESnodes_ran)
+ESnet_ran <- igraph::simplify(ESnet_ran, remove.loops = TRUE)
+ESmat_ran <- as_adjacency_matrix(ESnet_ran, sparse = FALSE, attr = NULL)
+ESnet_ran <- as.data.frame(ESmat_ran) #red con SEs
+SPPnodes_ran <- SPPnodes[match(ran_seq_spp, SPPnodes$Species), ]
+SPPnet_ran <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes_ran)
+SPPnet_ran <- igraph::simplify(SPPnet_ran, remove.loops = TRUE)
+SPPmat_ran <- as_adjacency_matrix(SPPnet_ran, sparse = FALSE, attr = NULL)
+SPPnet_ran <- as.data.frame(SPPmat_ran) #red sin SEs
+
+#especificar redes para secuencias
+ESred <- ESnet_ran
+SPPred <- SPPnet_ran
+
+#adaptado de Salinas et al. (2016)
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes)
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+N <-length(producers)
+ES_Net<-list()
+ESS <- length(ESred)
+SPP_Net<-list()
+SPPS <- length(SPPred)
+
+#correr simulación con SEs
+  thresh<- 0
+  NumPrey <-rep(0,ESS)
+  vectorthresh <- as.data.frame(NumPrey,row.names=names(ESred))
+  for (b in 1:ESS) {
+    vectorthresh[b,1] <- sum(ESred[,b])}
+  vectorthresh <- (vectorthresh*thresh)
+  vectorthresh <- as.vector(vectorthresh[,1])
+  ES_Net<-list()
+  A <- rbind(ESred,vectorthresh)
+
+  try(for (x in 1:S){
+    if(length(A)>1 & sum(A)!=0){ 
+      B <- A[-1,]
+      A <- B[,-1]
+      repeat {
+        if (length(A) > 1){
+          a <- vector("integer",0)
+          for (l in 1:length(A)) {
+            z <- vector("logical",0)
+            for (k in 1:N) {z <- c(z, names(A)[l] == producers[k])}
+          if ((sum((A[-(length(A)+1),])[,l]) <= A[(length(A)+1),l]) & !any(z)){
+            a <- c(a,l)}}
+        if (length(a)>0){
+          A <- A[-a,]
+          A <- A[,-a]
+          } else {
+            break}}}
+      m<-A[-(length(A)+1),]
+      ES_Net[[x]] <-m
+      }}, silent = TRUE)
+
+#correr simulación sin SEs
+  thresh<- 0
+  NumPrey <-rep(0,SPPS)
+  vectorthresh <- as.data.frame(NumPrey,row.names=names(SPPred))
+  for (b in 1:SPPS) {
+    vectorthresh[b,1] <- sum(SPPred[,b])}
+  vectorthresh <- (vectorthresh*thresh)
+  vectorthresh <- as.vector(vectorthresh[,1])
+  SPP_net<-list()
+  A <- rbind(SPPred,vectorthresh)
+  try(for (x in 1:SPPS){
+    if(length(A) > 1 & sum(A)!=0){
+      B <- A[-1,]
+      A <- B[,-1]
+      repeat {
+        if (length(A) > 1){
+          a <- vector("integer",0)
+          for (l in 1:length(A)) {
+            z <- vector("logical",0)
+            for (k in 1:N) {z <- c(z, names(A)[l] == producers[k])}
+          if ((sum((A[-(length(A)+1),])[,l]) <= A[(length(A)+1),l]) & !any(z)){
+            a <- c(a,l)}}
+        if (length(a)>0){
+          A <- A[-a,]
+          A <- A[,-a]
+          } else {
+            break}}}
+      m<-A[-(length(A)+1),]
+      SPP_net[[x]] <- m
+      }}, silent = TRUE)
+
+#crear vectores para las curvas de robustez
+
+#para SEs
+ESnet_ran<- data.frame()
+for (i in 1:length(ES_Net)){
+  species <- as.data.frame(ES_Net[[i]])
+  species <- names(species)
+  species_diff <- intersect(ES,species)
+  ES_lost <- (length(ES)-length(species_diff))
+  ESnet_ran <- rbind(ESnet_ran, ES_lost)
+}
+colnames(ESnet_ran)[1] ="ES_lost"
+ESnet_ran$pri_ext <- 1:nrow(ESnet_ran)
+
+#para la red trófica
+SPPnet_ran<- data.frame()
+for (i in 1:length(SPP_net)){
+  count<-count(SPP_net[[i]])
+  SPPnet_ran <- rbind(SPPnet_ran, count)
+}
+SPPnet_ran$pri_ext <- 1:nrow(SPPnet_ran)
+SPPnet_ran$sec_ext <- (((SPPnet_ran[1,1]+1) - SPPnet_ran$pri_ext) - SPPnet_ran$n)
+
+#calculaciones del área bajo la curva
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+basal <- count(producers)
+basal <- as.integer(basal)
+ES <- subset(nodes, nodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+all <- as.vector(SPPnodes[,1])
+ESall <- length(all) + length(ES)
+susc <- length(all)-basal
+
+#SEs
+ESnet_ran$prop_surv <- (8-ESnet_ran$ES_lost)/8
+ESnet_ran$prop_ext <- ESnet_ran$pri_ext/ESall
+ESnet_ran <- rbind(data.frame(ES_lost = 0, pri_ext = 0, prop_surv = 1, prop_ext = 0), ESnet_ran)
+AUCES <- AUC(ESnet_ran$prop_ext, ESnet_ran$prop_surv, from = min(min(ESnet_ran$prop_ext)), to = max(max(ESnet_ran$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#red trófica
+SPPnet_ran$prop_surv <- (susc - SPPnet_ran$sec_ext)/susc
+SPPnet_ran$prop_ext <- SPPnet_ran$pri_ext/length(all)
+SPPnet_ran <- rbind(data.frame(n = 379, pri_ext = 0, sec_ext = 0, prop_surv = 1, prop_ext = 0), SPPnet_ran)
+AUCSPP <- AUC(SPPnet_ran$prop_ext, SPPnet_ran$prop_surv, from = min(min(SPPnet_ran$prop_ext)), to = max(max(SPPnet_ran$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#guardar estadísticas
+net_ranr <- rbind(net_ranr, r)
+net_ranAUCES <- rbind(net_ranAUCES, AUCES)
+net_ranAUCSPP <- rbind(net_ranAUCSPP, AUCSPP)
+}
+```
+
+```{r}
+#agregar y seleccionar simulaciones para incluir en el análisis
+AUC_ran <- cbind(net_ranr, net_ranAUCES, net_ranAUCSPP)
+colnames(AUC_ran) <- c("iteration", "ES", "SPP")
+minran <- c(min(AUC_ran$ES), min(AUC_ran$SPP), "Minimo aleatorio")
+maxran <- c(max(AUC_ran$ES), max(AUC_ran$SPP), "Maximo aleatorio")
+meanran <- c(mean(AUC_ran$ES), mean(AUC_ran$SPP), "Promedio aleatorio")
+save(AUC_ran, minran, maxran, meanran, file = "./RandomSims.RData")
+```
