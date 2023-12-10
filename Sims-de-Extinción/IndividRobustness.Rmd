@@ -1,0 +1,1549 @@
+---
+title: "Individual Robustness"
+author: "Mitch Porter"
+date: "2023-12-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#cargar datos
+load("./Simulaciones.RData")
+load("./RandomSims.RData")
+nodes <- read.csv("./ESBurdwoodSpeciesList.csv")
+ESlinks <- read.csv("./ESInteractionList_Burdwood.csv")
+```
+
+```{r}
+#rastrear perdida de cada SE para cada secuencia
+
+#pesca
+stats_fishing1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing1 <- rbind(stats_fishing1, ES_lost)
+}
+
+stats_fishing1$pri_ext <- 1:nrow(stats_fishing1)
+num <- count(stats_fishing1)
+num <- as.integer(num)
+stats_fishing1$n <- num - stats_fishing1$pri_ext
+
+stats_fishing2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing2 <- rbind(stats_fishing2, ES_lost)
+}
+
+stats_fishing2$pri_ext <- 1:nrow(stats_fishing2)
+num <- count(stats_fishing2)
+num <- as.integer(num)
+stats_fishing2$n <- num - stats_fishing2$pri_ext
+
+stats_fishing3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing3 <- rbind(stats_fishing3, ES_lost)
+}
+
+stats_fishing3$pri_ext <- 1:nrow(stats_fishing3)
+num <- count(stats_fishing3)
+num <- as.integer(num)
+stats_fishing3$n <- num - stats_fishing3$pri_ext
+
+stats_fishing3 <- top_n(stats_fishing3, 64, n)
+
+stats_fishing4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing4 <- rbind(stats_fishing4, ES_lost)
+}
+
+stats_fishing4$pri_ext <- 1:nrow(stats_fishing4)
+num <- count(stats_fishing4)
+num <- as.integer(num)
+stats_fishing4$n <- num - stats_fishing4$pri_ext
+
+stats_fishing4 <- top_n(stats_fishing4, 152, n)
+
+stats_fishing5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing5 <- rbind(stats_fishing5, ES_lost)
+}
+
+stats_fishing5$pri_ext <- 1:nrow(stats_fishing5)
+num <- count(stats_fishing5)
+num <- as.integer(num)
+stats_fishing5$n <- num - stats_fishing5$pri_ext
+
+stats_fishing5 <- top_n(stats_fishing5, 118, n)
+
+stats_fishing6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing6 <- rbind(stats_fishing6, ES_lost)
+}
+
+stats_fishing6$pri_ext <- 1:nrow(stats_fishing6)
+num <- count(stats_fishing6)
+num <- as.integer(num)
+stats_fishing6$n <- num - stats_fishing6$pri_ext
+
+stats_fishing6 <- top_n(stats_fishing6, 92, n)
+
+stats_fishing7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing7 <- rbind(stats_fishing7, ES_lost)
+}
+
+stats_fishing7$pri_ext <- 1:nrow(stats_fishing7)
+num <- count(stats_fishing7)
+num <- as.integer(num)
+stats_fishing7$n <- num - stats_fishing7$pri_ext
+
+stats_fishing8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  fishing <- c("Pesca")
+  species_diff <- intersect(fishing,species)
+  ES_lost <- (length(fishing)-length(species_diff))
+  stats_fishing8 <- rbind(stats_fishing8, ES_lost)
+}
+
+stats_fishing8$pri_ext <- 1:nrow(stats_fishing8)
+num <- count(stats_fishing8)
+num <- as.integer(num)
+stats_fishing8$n <- num - stats_fishing8$pri_ext
+
+#materia prima
+stats_raw_mat1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat1 <- rbind(stats_raw_mat1, ES_lost)
+}
+
+stats_raw_mat1$pri_ext <- 1:nrow(stats_raw_mat1)
+num <- count(stats_raw_mat1)
+num <- as.integer(num)
+stats_raw_mat1$n <- num - stats_raw_mat1$pri_ext
+
+stats_raw_mat2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat2 <- rbind(stats_raw_mat2, ES_lost)
+}
+
+stats_raw_mat2$pri_ext <- 1:nrow(stats_raw_mat2)
+num <- count(stats_raw_mat2)
+num <- as.integer(num)
+stats_raw_mat2$n <- num - stats_raw_mat2$pri_ext
+
+stats_raw_mat3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat3 <- rbind(stats_raw_mat3, ES_lost)
+}
+
+stats_raw_mat3$pri_ext <- 1:nrow(stats_raw_mat3)
+num <- count(stats_raw_mat3)
+num <- as.integer(num)
+stats_raw_mat3$n <- num - stats_raw_mat3$pri_ext
+
+stats_raw_mat3 <- top_n(stats_raw_mat3, 64, n)
+
+stats_raw_mat4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat4 <- rbind(stats_raw_mat4, ES_lost)
+}
+
+stats_raw_mat4$pri_ext <- 1:nrow(stats_raw_mat4)
+num <- count(stats_raw_mat4)
+num <- as.integer(num)
+stats_raw_mat4$n <- num - stats_raw_mat4$pri_ext
+
+stats_raw_mat4 <- top_n(stats_raw_mat4, 152, n)
+
+stats_raw_mat5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat5 <- rbind(stats_raw_mat5, ES_lost)
+}
+
+stats_raw_mat5$pri_ext <- 1:nrow(stats_raw_mat5)
+num <- count(stats_raw_mat5)
+num <- as.integer(num)
+stats_raw_mat5$n <- num - stats_raw_mat5$pri_ext
+
+stats_raw_mat5 <- top_n(stats_raw_mat5, 118, n)
+
+stats_raw_mat6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat6 <- rbind(stats_raw_mat6, ES_lost)
+}
+
+stats_raw_mat6$pri_ext <- 1:nrow(stats_raw_mat6)
+num <- count(stats_raw_mat6)
+num <- as.integer(num)
+stats_raw_mat6$n <- num - stats_raw_mat6$pri_ext
+
+stats_raw_mat6 <- top_n(stats_raw_mat6, 92, n)
+
+stats_raw_mat7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat7 <- rbind(stats_raw_mat7, ES_lost)
+}
+
+stats_raw_mat7$pri_ext <- 1:nrow(stats_raw_mat7)
+num <- count(stats_raw_mat7)
+num <- as.integer(num)
+stats_raw_mat7$n <- num - stats_raw_mat7$pri_ext
+
+stats_raw_mat8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  raw_mat <- c("Materia prima")
+  species_diff <- intersect(raw_mat,species)
+  ES_lost <- (length(raw_mat)-length(species_diff))
+  stats_raw_mat8 <- rbind(stats_raw_mat8, ES_lost)
+}
+
+stats_raw_mat8$pri_ext <- 1:nrow(stats_raw_mat8)
+num <- count(stats_raw_mat8)
+num <- as.integer(num)
+stats_raw_mat8$n <- num - stats_raw_mat8$pri_ext
+
+
+#biodiversidad
+stats_biodiv1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv1 <- rbind(stats_biodiv1, ES_lost)
+}
+
+stats_biodiv1$pri_ext <- 1:nrow(stats_biodiv1)
+num <- count(stats_biodiv1)
+num <- as.integer(num)
+stats_biodiv1$n <- num - stats_biodiv1$pri_ext
+
+stats_biodiv2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv2 <- rbind(stats_biodiv2, ES_lost)
+}
+
+stats_biodiv2$pri_ext <- 1:nrow(stats_biodiv2)
+num <- count(stats_biodiv2)
+num <- as.integer(num)
+stats_biodiv2$n <- num - stats_biodiv2$pri_ext
+
+stats_biodiv3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv3 <- rbind(stats_biodiv3, ES_lost)
+}
+
+stats_biodiv3$pri_ext <- 1:nrow(stats_biodiv3)
+num <- count(stats_biodiv3)
+num <- as.integer(num)
+stats_biodiv3$n <- num - stats_biodiv3$pri_ext
+
+stats_biodiv3 <- top_n(stats_biodiv3, 64, n)
+
+stats_biodiv4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv4 <- rbind(stats_biodiv4, ES_lost)
+}
+
+stats_biodiv4$pri_ext <- 1:nrow(stats_biodiv4)
+num <- count(stats_biodiv4)
+num <- as.integer(num)
+stats_biodiv4$n <- num - stats_biodiv4$pri_ext
+
+stats_biodiv4 <- top_n(stats_biodiv4, 152, n)
+
+stats_biodiv5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv5 <- rbind(stats_biodiv5, ES_lost)
+}
+
+stats_biodiv5$pri_ext <- 1:nrow(stats_biodiv5)
+num <- count(stats_biodiv5)
+num <- as.integer(num)
+stats_biodiv5$n <- num - stats_biodiv5$pri_ext
+
+stats_biodiv5 <- top_n(stats_biodiv5, 118, n)
+
+stats_biodiv6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv6 <- rbind(stats_biodiv6, ES_lost)
+}
+
+stats_biodiv6$pri_ext <- 1:nrow(stats_biodiv6)
+num <- count(stats_biodiv6)
+num <- as.integer(num)
+stats_biodiv6$n <- num - stats_biodiv6$pri_ext
+
+stats_biodiv6 <- top_n(stats_biodiv6, 92, n)
+
+stats_biodiv7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv7 <- rbind(stats_biodiv7, ES_lost)
+}
+
+stats_biodiv7$pri_ext <- 1:nrow(stats_biodiv7)
+num <- count(stats_biodiv7)
+num <- as.integer(num)
+stats_biodiv7$n <- num - stats_biodiv7$pri_ext
+
+stats_biodiv8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  biodiv <- c("Biodiversidad")
+  species_diff <- intersect(biodiv,species)
+  ES_lost <- (length(biodiv)-length(species_diff))
+  stats_biodiv8 <- rbind(stats_biodiv8, ES_lost)
+}
+stats_biodiv8$pri_ext <- 1:nrow(stats_biodiv8)
+num <- count(stats_biodiv8)
+num <- as.integer(num)
+stats_biodiv8$n <- num - stats_biodiv8$pri_ext
+
+
+#biopurificacion
+stats_biopur1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur1 <- rbind(stats_biopur1, ES_lost)
+}
+
+stats_biopur1$pri_ext <- 1:nrow(stats_biopur1)
+num <- count(stats_biopur1)
+num <- as.integer(num)
+stats_biopur1$n <- num - stats_biopur1$pri_ext
+
+stats_biopur2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur2 <- rbind(stats_biopur2, ES_lost)
+}
+
+stats_biopur2$pri_ext <- 1:nrow(stats_biopur2)
+num <- count(stats_biopur2)
+num <- as.integer(num)
+stats_biopur2$n <- num - stats_biopur2$pri_ext
+
+stats_biopur3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur3 <- rbind(stats_biopur3, ES_lost)
+}
+
+stats_biopur3$pri_ext <- 1:nrow(stats_biopur3)
+num <- count(stats_biopur3)
+num <- as.integer(num)
+stats_biopur3$n <- num - stats_biopur3$pri_ext
+
+stats_biopur3 <- top_n(stats_biopur3, 64, n)
+
+stats_biopur4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur4 <- rbind(stats_biopur4, ES_lost)
+}
+
+stats_biopur4$pri_ext <- 1:nrow(stats_biopur4)
+num <- count(stats_biopur4)
+num <- as.integer(num)
+stats_biopur4$n <- num - stats_biopur4$pri_ext
+
+stats_biopur4 <- top_n(stats_biopur4, 152, n)
+
+stats_biopur5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur5 <- rbind(stats_biopur5, ES_lost)
+}
+
+stats_biopur5$pri_ext <- 1:nrow(stats_biopur5)
+num <- count(stats_biopur5)
+num <- as.integer(num)
+stats_biopur5$n <- num - stats_biopur5$pri_ext
+
+stats_biopur5 <- top_n(stats_biopur5, 118, n)
+
+stats_biopur6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur6 <- rbind(stats_biopur6, ES_lost)
+}
+
+stats_biopur6$pri_ext <- 1:nrow(stats_biopur6)
+num <- count(stats_biopur6)
+num <- as.integer(num)
+stats_biopur6$n <- num - stats_biopur6$pri_ext
+
+stats_biopur6 <- top_n(stats_biopur6, 92, n)
+
+stats_biopur7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur7 <- rbind(stats_biopur7, ES_lost)
+}
+
+stats_biopur7$pri_ext <- 1:nrow(stats_biopur7)
+num <- count(stats_biopur7)
+num <- as.integer(num)
+stats_biopur7$n <- num - stats_biopur7$pri_ext
+
+stats_biopur8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  biopur <- c("Biopurificacion")
+  species_diff <- intersect(biopur,species)
+  ES_lost <- (length(biopur)-length(species_diff))
+  stats_biopur8 <- rbind(stats_biopur8, ES_lost)
+}
+
+stats_biopur8$pri_ext <- 1:nrow(stats_biopur8)
+num <- count(stats_biopur8)
+num <- as.integer(num)
+stats_biopur8$n <- num - stats_biopur8$pri_ext
+
+#flujo de carbono
+stats_carbon_flux1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux1 <- rbind(stats_carbon_flux1, ES_lost)
+}
+
+stats_carbon_flux1$pri_ext <- 1:nrow(stats_carbon_flux1)
+num <- count(stats_carbon_flux1)
+num <- as.integer(num)
+stats_carbon_flux1$n <- num - stats_carbon_flux1$pri_ext
+
+stats_carbon_flux2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux2 <- rbind(stats_carbon_flux2, ES_lost)
+}
+
+stats_carbon_flux2$pri_ext <- 1:nrow(stats_carbon_flux2)
+num <- count(stats_carbon_flux2)
+num <- as.integer(num)
+stats_carbon_flux2$n <- num - stats_carbon_flux2$pri_ext
+
+stats_carbon_flux3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux3 <- rbind(stats_carbon_flux3, ES_lost)
+}
+
+stats_carbon_flux3$pri_ext <- 1:nrow(stats_carbon_flux3)
+num <- count(stats_carbon_flux3)
+num <- as.integer(num)
+stats_carbon_flux3$n <- num - stats_carbon_flux3$pri_ext
+
+stats_carbon_flux3 <- top_n(stats_carbon_flux3, 64, n)
+
+stats_carbon_flux4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux4 <- rbind(stats_carbon_flux4, ES_lost)
+}
+
+stats_carbon_flux4$pri_ext <- 1:nrow(stats_carbon_flux4)
+num <- count(stats_carbon_flux4)
+num <- as.integer(num)
+stats_carbon_flux4$n <- num - stats_carbon_flux4$pri_ext
+
+stats_carbon_flux4 <- top_n(stats_carbon_flux4, 152, n)
+
+stats_carbon_flux5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux5 <- rbind(stats_carbon_flux5, ES_lost)
+}
+
+stats_carbon_flux5$pri_ext <- 1:nrow(stats_carbon_flux5)
+num <- count(stats_carbon_flux5)
+num <- as.integer(num)
+stats_carbon_flux5$n <- num - stats_carbon_flux5$pri_ext
+
+stats_carbon_flux5 <- top_n(stats_carbon_flux5, 118, n)
+
+stats_carbon_flux6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux6 <- rbind(stats_carbon_flux6, ES_lost)
+}
+
+stats_carbon_flux6$pri_ext <- 1:nrow(stats_carbon_flux6)
+num <- count(stats_carbon_flux6)
+num <- as.integer(num)
+stats_carbon_flux6$n <- num - stats_carbon_flux6$pri_ext
+
+stats_carbon_flux6 <- top_n(stats_carbon_flux6, 92, n)
+
+stats_carbon_flux7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux7 <- rbind(stats_carbon_flux7, ES_lost)
+}
+
+stats_carbon_flux7$pri_ext <- 1:nrow(stats_carbon_flux7)
+num <- count(stats_carbon_flux7)
+num <- as.integer(num)
+stats_carbon_flux7$n <- num - stats_carbon_flux7$pri_ext
+
+stats_carbon_flux8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  carbon_flux <- c("Flujo de carbono")
+  species_diff <- intersect(carbon_flux,species)
+  ES_lost <- (length(carbon_flux)-length(species_diff))
+  stats_carbon_flux8 <- rbind(stats_carbon_flux8, ES_lost)
+}
+
+stats_carbon_flux8$pri_ext <- 1:nrow(stats_carbon_flux8)
+num <- count(stats_carbon_flux8)
+num <- as.integer(num)
+stats_carbon_flux8$n <- num - stats_carbon_flux8$pri_ext
+
+#secuestro de carbono
+stats_carbon_seq1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq1 <- rbind(stats_carbon_seq1, ES_lost)
+}
+
+stats_carbon_seq1$pri_ext <- 1:nrow(stats_carbon_seq1)
+num <- count(stats_carbon_seq1)
+num <- as.integer(num)
+stats_carbon_seq1$n <- num - stats_carbon_seq1$pri_ext
+
+stats_carbon_seq2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq2 <- rbind(stats_carbon_seq2, ES_lost)
+}
+
+stats_carbon_seq2$pri_ext <- 1:nrow(stats_carbon_seq2)
+num <- count(stats_carbon_seq2)
+num <- as.integer(num)
+stats_carbon_seq2$n <- num - stats_carbon_seq2$pri_ext
+
+stats_carbon_seq3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq3 <- rbind(stats_carbon_seq3, ES_lost)
+}
+
+stats_carbon_seq3$pri_ext <- 1:nrow(stats_carbon_seq3)
+num <- count(stats_carbon_seq3)
+num <- as.integer(num)
+stats_carbon_seq3$n <- num - stats_carbon_seq3$pri_ext
+
+stats_carbon_seq3 <- top_n(stats_carbon_seq3, 64, n)
+
+stats_carbon_seq4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq4 <- rbind(stats_carbon_seq4, ES_lost)
+}
+
+stats_carbon_seq4$pri_ext <- 1:nrow(stats_carbon_seq4)
+num <- count(stats_carbon_seq4)
+num <- as.integer(num)
+stats_carbon_seq4$n <- num - stats_carbon_seq4$pri_ext
+
+stats_carbon_seq4 <- top_n(stats_carbon_seq4, 152, n)
+
+stats_carbon_seq5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq5 <- rbind(stats_carbon_seq5, ES_lost)
+}
+
+stats_carbon_seq5$pri_ext <- 1:nrow(stats_carbon_seq5)
+num <- count(stats_carbon_seq5)
+num <- as.integer(num)
+stats_carbon_seq5$n <- num - stats_carbon_seq5$pri_ext
+
+stats_carbon_seq5 <- top_n(stats_carbon_seq5, 118, n)
+
+stats_carbon_seq6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq6 <- rbind(stats_carbon_seq6, ES_lost)
+}
+
+stats_carbon_seq6$pri_ext <- 1:nrow(stats_carbon_seq6)
+num <- count(stats_carbon_seq6)
+num <- as.integer(num)
+stats_carbon_seq6$n <- num - stats_carbon_seq6$pri_ext
+
+stats_carbon_seq6 <- top_n(stats_carbon_seq6, 92, n)
+
+stats_carbon_seq7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq7 <- rbind(stats_carbon_seq7, ES_lost)
+}
+
+stats_carbon_seq7$pri_ext <- 1:nrow(stats_carbon_seq7)
+num <- count(stats_carbon_seq7)
+num <- as.integer(num)
+stats_carbon_seq7$n <- num - stats_carbon_seq7$pri_ext
+
+stats_carbon_seq8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  carbon_seq <- c("Secuestro de carbono")
+  species_diff <- intersect(carbon_seq,species)
+  ES_lost <- (length(carbon_seq)-length(species_diff))
+  stats_carbon_seq8 <- rbind(stats_carbon_seq8, ES_lost)
+}
+
+stats_carbon_seq8$pri_ext <- 1:nrow(stats_carbon_seq8)
+num <- count(stats_carbon_seq8)
+num <- as.integer(num)
+stats_carbon_seq8$n <- num - stats_carbon_seq8$pri_ext
+
+#identidad
+stats_identidad1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad1 <- rbind(stats_identidad1, ES_lost)
+}
+
+stats_identidad1$pri_ext <- 1:nrow(stats_identidad1)
+num <- count(stats_identidad1)
+num <- as.integer(num)
+stats_identidad1$n <- num - stats_identidad1$pri_ext
+
+stats_identidad2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad2 <- rbind(stats_identidad2, ES_lost)
+}
+
+stats_identidad2$pri_ext <- 1:nrow(stats_identidad2)
+num <- count(stats_identidad2)
+num <- as.integer(num)
+stats_identidad2$n <- num - stats_identidad2$pri_ext
+
+stats_identidad3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad3 <- rbind(stats_identidad3, ES_lost)
+}
+
+stats_identidad3$pri_ext <- 1:nrow(stats_identidad3)
+num <- count(stats_identidad3)
+num <- as.integer(num)
+stats_identidad3$n <- num - stats_identidad3$pri_ext
+
+stats_identidad3 <- top_n(stats_identidad3, 64, n)
+
+stats_identidad4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad4 <- rbind(stats_identidad4, ES_lost)
+}
+
+stats_identidad4$pri_ext <- 1:nrow(stats_identidad4)
+num <- count(stats_identidad4)
+num <- as.integer(num)
+stats_identidad4$n <- num - stats_identidad4$pri_ext
+
+stats_identidad4 <- top_n(stats_identidad4, 152, n)
+
+stats_identidad5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad5 <- rbind(stats_identidad5, ES_lost)
+}
+
+stats_identidad5$pri_ext <- 1:nrow(stats_identidad5)
+num <- count(stats_identidad5)
+num <- as.integer(num)
+stats_identidad5$n <- num - stats_identidad5$pri_ext
+
+stats_identidad5 <- top_n(stats_identidad5, 118, n)
+
+stats_identidad6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad6 <- rbind(stats_identidad6, ES_lost)
+}
+
+stats_identidad6$pri_ext <- 1:nrow(stats_identidad6)
+num <- count(stats_identidad6)
+num <- as.integer(num)
+stats_identidad6$n <- num - stats_identidad6$pri_ext
+
+stats_identidad6 <- top_n(stats_identidad6, 92, n)
+
+stats_identidad7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad7 <- rbind(stats_identidad7, ES_lost)
+}
+
+stats_identidad7$pri_ext <- 1:nrow(stats_identidad7)
+num <- count(stats_identidad7)
+num <- as.integer(num)
+stats_identidad7$n <- num - stats_identidad7$pri_ext
+
+stats_identidad8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  identidad <- c("Identidad")
+  species_diff <- intersect(identidad,species)
+  ES_lost <- (length(identidad)-length(species_diff))
+  stats_identidad8 <- rbind(stats_identidad8, ES_lost)
+}
+
+stats_identidad8$pri_ext <- 1:nrow(stats_identidad8)
+num <- count(stats_identidad8)
+num <- as.integer(num)
+stats_identidad8$n <- num - stats_identidad8$pri_ext
+
+#educacion
+stats_edu1 <- data.frame()
+for (i in 1:length(net1_ES)){
+  species <- as.data.frame(net1_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu1 <- rbind(stats_edu1, ES_lost)
+}
+
+stats_edu1$pri_ext <- 1:nrow(stats_edu1)
+num <- count(stats_edu1)
+num <- as.integer(num)
+stats_edu1$n <- num - stats_edu1$pri_ext
+
+stats_edu2 <- data.frame()
+for (i in 1:length(net2_ES)){
+  species <- as.data.frame(net2_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu2 <- rbind(stats_edu2, ES_lost)
+}
+
+stats_edu2$pri_ext <- 1:nrow(stats_edu2)
+num <- count(stats_edu2)
+num <- as.integer(num)
+stats_edu2$n <- num - stats_edu2$pri_ext
+
+stats_edu3 <- data.frame()
+for (i in 1:length(net3_ES)){
+  species <- as.data.frame(net3_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu3 <- rbind(stats_edu3, ES_lost)
+}
+
+stats_edu3$pri_ext <- 1:nrow(stats_edu3)
+num <- count(stats_edu3)
+num <- as.integer(num)
+stats_edu3$n <- num - stats_edu3$pri_ext
+
+stats_edu3 <- top_n(stats_edu3, 64, n)
+
+stats_edu4 <- data.frame()
+for (i in 1:length(net4_ES)){
+  species <- as.data.frame(net4_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu4 <- rbind(stats_edu4, ES_lost)
+}
+
+stats_edu4$pri_ext <- 1:nrow(stats_edu4)
+num <- count(stats_edu4)
+num <- as.integer(num)
+stats_edu4$n <- num - stats_edu4$pri_ext
+
+stats_edu4 <- top_n(stats_edu4, 152, n)
+
+stats_edu5 <- data.frame()
+for (i in 1:length(net5_ES)){
+  species <- as.data.frame(net5_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu5 <- rbind(stats_edu5, ES_lost)
+}
+
+stats_edu5$pri_ext <- 1:nrow(stats_edu5)
+num <- count(stats_edu5)
+num <- as.integer(num)
+stats_edu5$n <- num - stats_edu5$pri_ext
+
+stats_edu5 <- top_n(stats_edu5, 118, n)
+
+stats_edu6 <- data.frame()
+for (i in 1:length(net6_ES)){
+  species <- as.data.frame(net6_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu6 <- rbind(stats_edu6, ES_lost)
+}
+
+stats_edu6$pri_ext <- 1:nrow(stats_edu6)
+num <- count(stats_edu6)
+num <- as.integer(num)
+stats_edu6$n <- num - stats_edu6$pri_ext
+
+stats_edu6 <- top_n(stats_edu6, 92, n)
+
+stats_edu7 <- data.frame()
+for (i in 1:length(net7_ES)){
+  species <- as.data.frame(net7_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu7 <- rbind(stats_edu7, ES_lost)
+}
+
+stats_edu7$pri_ext <- 1:nrow(stats_edu7)
+num <- count(stats_edu7)
+num <- as.integer(num)
+stats_edu7$n <- num - stats_edu7$pri_ext
+
+stats_edu8 <- data.frame()
+for (i in 1:length(net8_ES)){
+  species <- as.data.frame(net8_ES[[i]])
+  species <- names(species)
+  edu <- c("Educacion")
+  species_diff <- intersect(edu,species)
+  ES_lost <- (length(edu)-length(species_diff))
+  stats_edu8 <- rbind(stats_edu8, ES_lost)
+}
+
+stats_edu8$pri_ext <- 1:nrow(stats_edu8)
+num <- count(stats_edu8)
+num <- as.integer(num)
+stats_edu8$n <- num - stats_edu8$pri_ext
+
+```
+
+```{r}
+#calculacion de robustez
+SPPnodes <- subset(nodes, nodes$vertextype < 30)
+SPPlinks <- subset(ESlinks, ESlinks$edgetype == 0)
+SPPnet <- graph.data.frame(SPPlinks, directed = T, vertices = SPPnodes)
+producers <- data.frame(SpeciesID = SPPnodes$Species, InDegree = igraph::degree(SPPnet, mode="in"))
+producers <- producers[producers$InDegree==0,]
+basal <- count(producers)
+basal <- as.integer(basal)
+ES <- subset(nodes, nodes$vertextype > 30)
+ES <- as.vector(ES[,1])
+all <- as.vector(SPPnodes[,1])
+ESall <- length(all) + length(ES)
+susc <- length(all)-basal
+
+#pesca
+stats_fishing1$prop_surv <- (1-stats_fishing1$X0L)
+stats_fishing1$prop_ext <- stats_fishing1$pri_ext/ESall
+stats_fishing1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing1)+1, prop_surv = 1, prop_ext = 0), stats_fishing1)
+AUC_fishing1 <- AUC(stats_fishing1$prop_ext, stats_fishing1$prop_surv, from = min(min(stats_fishing1$prop_ext)), to = max(max(stats_fishing1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_fishing2$prop_surv <- (1-stats_fishing2$X0L)
+stats_fishing2$prop_ext <- stats_fishing2$pri_ext/ESall
+stats_fishing2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing2)+1, prop_surv = 1, prop_ext = 0), stats_fishing2)
+AUC_fishing2 <- AUC(stats_fishing2$prop_ext, stats_fishing2$prop_surv, from = min(min(stats_fishing2$prop_ext)), to = max(max(stats_fishing2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_fishing3$prop_surv <- (1-stats_fishing3$X0L)
+stats_fishing3$prop_ext <- stats_fishing3$pri_ext/length(supporters)
+stats_fishing3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing3)+1, prop_surv = 1, prop_ext = 0), stats_fishing3)
+AUC_fishing3 <- AUC(stats_fishing3$prop_ext, stats_fishing3$prop_surv, from = min(min(stats_fishing3$prop_ext)), to = max(max(stats_fishing3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_fishing4$prop_surv <- (1-stats_fishing4$X0L)
+stats_fishing4$prop_ext <- stats_fishing4$pri_ext/length(supporters)
+stats_fishing4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing4)+1, prop_surv = 1, prop_ext = 0), stats_fishing4)
+AUC_fishing4 <- AUC(stats_fishing4$prop_ext, stats_fishing4$prop_surv, from = min(min(stats_fishing4$prop_ext)), to = max(max(stats_fishing4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_fishing5$prop_surv <- (1-stats_fishing5$X0L)
+stats_fishing5$prop_ext <- stats_fishing5$pri_ext/length(supporters)
+stats_fishing5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing5)+1, prop_surv = 1, prop_ext = 0), stats_fishing5)
+AUC_fishing5 <- AUC(stats_fishing5$prop_ext, stats_fishing5$prop_surv, from = min(min(stats_fishing5$prop_ext)), to = max(max(stats_fishing5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_fishing6$prop_surv <- (1-stats_fishing6$X0L)
+stats_fishing6$prop_ext <- stats_fishing6$pri_ext/length(providers)
+stats_fishing6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing6)+1, prop_surv = 1, prop_ext = 0), stats_fishing6)
+AUC_fishing6 <- AUC(stats_fishing6$prop_ext, stats_fishing6$prop_surv, from = min(min(stats_fishing6$prop_ext)), to = max(max(stats_fishing6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_fishing7$prop_surv <- (1-stats_fishing7$X0L)
+stats_fishing7$prop_ext <- stats_fishing7$pri_ext/ESall
+stats_fishing7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing7)+1, prop_surv = 1, prop_ext = 0), stats_fishing7)
+AUC_fishing7 <- AUC(stats_fishing7$prop_ext, stats_fishing7$prop_surv, from = min(min(stats_fishing7$prop_ext)), to = max(max(stats_fishing7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_fishing8$prop_surv <- (1-stats_fishing8$X0L)
+stats_fishing8$prop_ext <- stats_fishing8$pri_ext/ESall
+stats_fishing8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_fishing8)+1, prop_surv = 1, prop_ext = 0), stats_fishing8)
+AUC_fishing8 <- AUC(stats_fishing8$prop_ext, stats_fishing8$prop_surv, from = min(min(stats_fishing8$prop_ext)), to = max(max(stats_fishing8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#para materia prima
+stats_raw_mat1$prop_surv <- (1-stats_raw_mat1$X0L)
+stats_raw_mat1$prop_ext <- stats_raw_mat1$pri_ext/ESall
+stats_raw_mat1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat1)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat1)
+AUC_raw_mat1 <- AUC(stats_raw_mat1$prop_ext, stats_raw_mat1$prop_surv, from = min(min(stats_raw_mat1$prop_ext)), to = max(max(stats_raw_mat1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_raw_mat2$prop_surv <- (1-stats_raw_mat2$X0L)
+stats_raw_mat2$prop_ext <- stats_raw_mat2$pri_ext/ESall
+stats_raw_mat2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat2)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat2)
+AUC_raw_mat2 <- AUC(stats_raw_mat2$prop_ext, stats_raw_mat2$prop_surv, from = min(min(stats_raw_mat2$prop_ext)), to = max(max(stats_raw_mat2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_raw_mat3$prop_surv <- (1-stats_raw_mat3$X0L)
+stats_raw_mat3$prop_ext <- stats_raw_mat3$pri_ext/length(supporters)
+stats_raw_mat3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat3)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat3)
+AUC_raw_mat3 <- AUC(stats_raw_mat3$prop_ext, stats_raw_mat3$prop_surv, from = min(min(stats_raw_mat3$prop_ext)), to = max(max(stats_raw_mat3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_raw_mat4$prop_surv <- (1-stats_raw_mat4$X0L)
+stats_raw_mat4$prop_ext <- stats_raw_mat4$pri_ext/length(supporters)
+stats_raw_mat4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat4)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat4)
+AUC_raw_mat4 <- AUC(stats_raw_mat4$prop_ext, stats_raw_mat4$prop_surv, from = min(min(stats_raw_mat4$prop_ext)), to = max(max(stats_raw_mat4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_raw_mat5$prop_surv <- (1-stats_raw_mat5$X0L)
+stats_raw_mat5$prop_ext <- stats_raw_mat5$pri_ext/length(supporters)
+stats_raw_mat5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat5)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat5)
+AUC_raw_mat5 <- AUC(stats_raw_mat5$prop_ext, stats_raw_mat5$prop_surv, from = min(min(stats_raw_mat5$prop_ext)), to = max(max(stats_raw_mat5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_raw_mat6$prop_surv <- (1-stats_raw_mat6$X0L)
+stats_raw_mat6$prop_ext <- stats_raw_mat6$pri_ext/length(providers)
+stats_raw_mat6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat6)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat6)
+AUC_raw_mat6 <- AUC(stats_raw_mat6$prop_ext, stats_raw_mat6$prop_surv, from = min(min(stats_raw_mat6$prop_ext)), to = max(max(stats_raw_mat6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_raw_mat7$prop_surv <- (1-stats_raw_mat7$X0L)
+stats_raw_mat7$prop_ext <- stats_raw_mat7$pri_ext/ESall
+stats_raw_mat7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat7)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat7)
+AUC_raw_mat7 <- AUC(stats_raw_mat7$prop_ext, stats_raw_mat7$prop_surv, from = min(min(stats_raw_mat7$prop_ext)), to = max(max(stats_raw_mat7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_raw_mat8$prop_surv <- (1-stats_raw_mat8$X0L)
+stats_raw_mat8$prop_ext <- stats_raw_mat8$pri_ext/ESall
+stats_raw_mat8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_raw_mat8)+1, prop_surv = 1, prop_ext = 0), stats_raw_mat8)
+AUC_raw_mat8 <- AUC(stats_raw_mat8$prop_ext, stats_raw_mat8$prop_surv, from = min(min(stats_raw_mat8$prop_ext)), to = max(max(stats_raw_mat8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#para biodiversidad
+stats_biodiv1$prop_surv <- (1-stats_biodiv1$X0L)
+stats_biodiv1$prop_ext <- stats_biodiv1$pri_ext/ESall
+stats_biodiv1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv1)+1, prop_surv = 1, prop_ext = 0), stats_biodiv1)
+AUC_biodiv1 <- AUC(stats_biodiv1$prop_ext, stats_biodiv1$prop_surv, from = min(min(stats_biodiv1$prop_ext)), to = max(max(stats_biodiv1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biodiv2$prop_surv <- (1-stats_biodiv2$X0L)
+stats_biodiv2$prop_ext <- stats_biodiv2$pri_ext/ESall
+stats_biodiv2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv2)+1, prop_surv = 1, prop_ext = 0), stats_biodiv2)
+AUC_biodiv2 <- AUC(stats_biodiv2$prop_ext, stats_biodiv2$prop_surv, from = min(min(stats_biodiv2$prop_ext)), to = max(max(stats_biodiv2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biodiv3$prop_surv <- (1-stats_biodiv3$X0L)
+stats_biodiv3$prop_ext <- stats_biodiv3$pri_ext/length(supporters)
+stats_biodiv3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv3)+1, prop_surv = 1, prop_ext = 0), stats_biodiv3)
+AUC_biodiv3 <- AUC(stats_biodiv3$prop_ext, stats_biodiv3$prop_surv, from = min(min(stats_biodiv3$prop_ext)), to = max(max(stats_biodiv3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biodiv4$prop_surv <- (1-stats_biodiv4$X0L)
+stats_biodiv4$prop_ext <- stats_biodiv4$pri_ext/length(supporters)
+stats_biodiv4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv4)+1, prop_surv = 1, prop_ext = 0), stats_biodiv4)
+AUC_biodiv4 <- AUC(stats_biodiv4$prop_ext, stats_biodiv4$prop_surv, from = min(min(stats_biodiv4$prop_ext)), to = max(max(stats_biodiv4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biodiv5$prop_surv <- (1-stats_biodiv5$X0L)
+stats_biodiv5$prop_ext <- stats_biodiv5$pri_ext/length(supporters)
+stats_biodiv5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv5)+1, prop_surv = 1, prop_ext = 0), stats_biodiv5)
+AUC_biodiv5 <- AUC(stats_biodiv5$prop_ext, stats_biodiv5$prop_surv, from = min(min(stats_biodiv5$prop_ext)), to = max(max(stats_biodiv5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biodiv6$prop_surv <- (1-stats_biodiv6$X0L)
+stats_biodiv6$prop_ext <- stats_biodiv6$pri_ext/length(providers)
+stats_biodiv6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv6)+1, prop_surv = 1, prop_ext = 0), stats_biodiv6)
+AUC_biodiv6 <- AUC(stats_biodiv6$prop_ext, stats_biodiv6$prop_surv, from = min(min(stats_biodiv6$prop_ext)), to = max(max(stats_biodiv6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biodiv7$prop_surv <- (1-stats_biodiv7$X0L)
+stats_biodiv7$prop_ext <- stats_biodiv7$pri_ext/ESall
+stats_biodiv7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv7)+1, prop_surv = 1, prop_ext = 0), stats_biodiv7)
+AUC_biodiv7 <- AUC(stats_biodiv7$prop_ext, stats_biodiv7$prop_surv, from = min(min(stats_biodiv7$prop_ext)), to = max(max(stats_biodiv7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biodiv8$prop_surv <- (1-stats_biodiv8$X0L)
+stats_biodiv8$prop_ext <- stats_biodiv8$pri_ext/ESall
+stats_biodiv8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biodiv8)+1, prop_surv = 1, prop_ext = 0), stats_biodiv8)
+AUC_biodiv8 <- AUC(stats_biodiv8$prop_ext, stats_biodiv8$prop_surv, from = min(min(stats_biodiv8$prop_ext)), to = max(max(stats_biodiv8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#para biopurificacion
+stats_biopur1$prop_surv <- (1-stats_biopur1$X0L)
+stats_biopur1$prop_ext <- stats_biopur1$pri_ext/ESall
+stats_biopur1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur1)+1, prop_surv = 1, prop_ext = 0), stats_biopur1)
+AUC_biopur1 <- AUC(stats_biopur1$prop_ext, stats_biopur1$prop_surv, from = min(min(stats_biopur1$prop_ext)), to = max(max(stats_biopur1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biopur2$prop_surv <- (1-stats_biopur2$X0L)
+stats_biopur2$prop_ext <- stats_biopur2$pri_ext/ESall
+stats_biopur2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur2)+1, prop_surv = 1, prop_ext = 0), stats_biopur2)
+AUC_biopur2 <- AUC(stats_biopur2$prop_ext, stats_biopur2$prop_surv, from = min(min(stats_biopur2$prop_ext)), to = max(max(stats_biopur2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biopur3$prop_surv <- (1-stats_biopur3$X0L)
+stats_biopur3$prop_ext <- stats_biopur3$pri_ext/length(supporters)
+stats_biopur3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur3)+1, prop_surv = 1, prop_ext = 0), stats_biopur3)
+AUC_biopur3 <- AUC(stats_biopur3$prop_ext, stats_biopur3$prop_surv, from = min(min(stats_biopur3$prop_ext)), to = max(max(stats_biopur3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biopur4$prop_surv <- (1-stats_biopur4$X0L)
+stats_biopur4$prop_ext <- stats_biopur4$pri_ext/length(supporters)
+stats_biopur4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur4)+1, prop_surv = 1, prop_ext = 0), stats_biopur4)
+AUC_biopur4 <- AUC(stats_biopur4$prop_ext, stats_biopur4$prop_surv, from = min(min(stats_biopur4$prop_ext)), to = max(max(stats_biopur4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biopur5$prop_surv <- (1-stats_biopur5$X0L)
+stats_biopur5$prop_ext <- stats_biopur5$pri_ext/length(supporters)
+stats_biopur5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur5)+1, prop_surv = 1, prop_ext = 0), stats_biopur5)
+AUC_biopur5 <- AUC(stats_biopur5$prop_ext, stats_biopur5$prop_surv, from = min(min(stats_biopur5$prop_ext)), to = max(max(stats_biopur5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biopur6$prop_surv <- (1-stats_biopur6$X0L)
+stats_biopur6$prop_ext <- stats_biopur6$pri_ext/length(providers)
+stats_biopur6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur6)+1, prop_surv = 1, prop_ext = 0), stats_biopur6)
+AUC_biopur6 <- AUC(stats_biopur6$prop_ext, stats_biopur6$prop_surv, from = min(min(stats_biopur6$prop_ext)), to = max(max(stats_biopur6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biopur7$prop_surv <- (1-stats_biopur7$X0L)
+stats_biopur7$prop_ext <- stats_biopur7$pri_ext/ESall
+stats_biopur7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur7)+1, prop_surv = 1, prop_ext = 0), stats_biopur7)
+AUC_biopur7 <- AUC(stats_biopur7$prop_ext, stats_biopur7$prop_surv, from = min(min(stats_biopur7$prop_ext)), to = max(max(stats_biopur7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_biopur8$prop_surv <- (1-stats_biopur8$X0L)
+stats_biopur8$prop_ext <- stats_biopur8$pri_ext/ESall
+stats_biopur8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_biopur8)+1, prop_surv = 1, prop_ext = 0), stats_biopur8)
+AUC_biopur8 <- AUC(stats_biopur8$prop_ext, stats_biopur8$prop_surv, from = min(min(stats_biopur8$prop_ext)), to = max(max(stats_biopur8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#para flujo de carbono
+stats_carbon_flux1$prop_surv <- (1-stats_carbon_flux1$X0L)
+stats_carbon_flux1$prop_ext <- stats_carbon_flux1$pri_ext/ESall
+stats_carbon_flux1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux1)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux1)
+AUC_carbon_flux1 <- AUC(stats_carbon_flux1$prop_ext, stats_carbon_flux1$prop_surv, from = min(min(stats_carbon_flux1$prop_ext)), to = max(max(stats_carbon_flux1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_flux2$prop_surv <- (1-stats_carbon_flux2$X0L)
+stats_carbon_flux2$prop_ext <- stats_carbon_flux2$pri_ext/ESall
+stats_carbon_flux2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux2)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux2)
+AUC_carbon_flux2 <- AUC(stats_carbon_flux2$prop_ext, stats_carbon_flux2$prop_surv, from = min(min(stats_carbon_flux2$prop_ext)), to = max(max(stats_carbon_flux2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_flux3$prop_surv <- (1-stats_carbon_flux3$X0L)
+stats_carbon_flux3$prop_ext <- stats_carbon_flux3$pri_ext/length(supporters)
+stats_carbon_flux3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux3)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux3)
+AUC_carbon_flux3 <- AUC(stats_carbon_flux3$prop_ext, stats_carbon_flux3$prop_surv, from = min(min(stats_carbon_flux3$prop_ext)), to = max(max(stats_carbon_flux3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_flux4$prop_surv <- (1-stats_carbon_flux4$X0L)
+stats_carbon_flux4$prop_ext <- stats_carbon_flux4$pri_ext/length(supporters)
+stats_carbon_flux4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux4)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux4)
+AUC_carbon_flux4 <- AUC(stats_carbon_flux4$prop_ext, stats_carbon_flux4$prop_surv, from = min(min(stats_carbon_flux4$prop_ext)), to = max(max(stats_carbon_flux4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_flux5$prop_surv <- (1-stats_carbon_flux5$X0L)
+stats_carbon_flux5$prop_ext <- stats_carbon_flux5$pri_ext/length(supporters)
+stats_carbon_flux5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux5)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux5)
+AUC_carbon_flux5 <- AUC(stats_carbon_flux5$prop_ext, stats_carbon_flux5$prop_surv, from = min(min(stats_carbon_flux5$prop_ext)), to = max(max(stats_carbon_flux5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_flux6$prop_surv <- (1-stats_carbon_flux6$X0L)
+stats_carbon_flux6$prop_ext <- stats_carbon_flux6$pri_ext/length(providers)
+stats_carbon_flux6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux6)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux6)
+AUC_carbon_flux6 <- AUC(stats_carbon_flux6$prop_ext, stats_carbon_flux6$prop_surv, from = min(min(stats_carbon_flux6$prop_ext)), to = max(max(stats_carbon_flux6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_flux7$prop_surv <- (1-stats_carbon_flux7$X0L)
+stats_carbon_flux7$prop_ext <- stats_carbon_flux7$pri_ext/ESall
+stats_carbon_flux7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux7)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux7)
+AUC_carbon_flux7 <- AUC(stats_carbon_flux7$prop_ext, stats_carbon_flux7$prop_surv, from = min(min(stats_carbon_flux7$prop_ext)), to = max(max(stats_carbon_flux7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_flux8$prop_surv <- (1-stats_carbon_flux8$X0L)
+stats_carbon_flux8$prop_ext <- stats_carbon_flux8$pri_ext/ESall
+stats_carbon_flux8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_flux8)+1, prop_surv = 1, prop_ext = 0), stats_carbon_flux8)
+AUC_carbon_flux8 <- AUC(stats_carbon_flux8$prop_ext, stats_carbon_flux8$prop_surv, from = min(min(stats_carbon_flux8$prop_ext)), to = max(max(stats_carbon_flux8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#para secuestro de carbono
+stats_carbon_seq1$prop_surv <- (1-stats_carbon_seq1$X0L)
+stats_carbon_seq1$prop_ext <- stats_carbon_seq1$pri_ext/ESall
+stats_carbon_seq1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq1)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq1)
+AUC_carbon_seq1 <- AUC(stats_carbon_seq1$prop_ext, stats_carbon_seq1$prop_surv, from = min(min(stats_carbon_seq1$prop_ext)), to = max(max(stats_carbon_seq1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_seq2$prop_surv <- (1-stats_carbon_seq2$X0L)
+stats_carbon_seq2$prop_ext <- stats_carbon_seq2$pri_ext/ESall
+stats_carbon_seq2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq2)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq2)
+AUC_carbon_seq2 <- AUC(stats_carbon_seq2$prop_ext, stats_carbon_seq2$prop_surv, from = min(min(stats_carbon_seq2$prop_ext)), to = max(max(stats_carbon_seq2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_seq3$prop_surv <- (1-stats_carbon_seq3$X0L)
+stats_carbon_seq3$prop_ext <- stats_carbon_seq3$pri_ext/length(supporters)
+stats_carbon_seq3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq3)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq3)
+AUC_carbon_seq3 <- AUC(stats_carbon_seq3$prop_ext, stats_carbon_seq3$prop_surv, from = min(min(stats_carbon_seq3$prop_ext)), to = max(max(stats_carbon_seq3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_seq4$prop_surv <- (1-stats_carbon_seq4$X0L)
+stats_carbon_seq4$prop_ext <- stats_carbon_seq4$pri_ext/length(supporters)
+stats_carbon_seq4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq4)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq4)
+AUC_carbon_seq4 <- AUC(stats_carbon_seq4$prop_ext, stats_carbon_seq4$prop_surv, from = min(min(stats_carbon_seq4$prop_ext)), to = max(max(stats_carbon_seq4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_seq5$prop_surv <- (1-stats_carbon_seq5$X0L)
+stats_carbon_seq5$prop_ext <- stats_carbon_seq5$pri_ext/length(supporters)
+stats_carbon_seq5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq5)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq5)
+AUC_carbon_seq5 <- AUC(stats_carbon_seq5$prop_ext, stats_carbon_seq5$prop_surv, from = min(min(stats_carbon_seq5$prop_ext)), to = max(max(stats_carbon_seq5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_seq6$prop_surv <- (1-stats_carbon_seq6$X0L)
+stats_carbon_seq6$prop_ext <- stats_carbon_seq6$pri_ext/length(providers)
+stats_carbon_seq6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq6)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq6)
+AUC_carbon_seq6 <- AUC(stats_carbon_seq6$prop_ext, stats_carbon_seq6$prop_surv, from = min(min(stats_carbon_seq6$prop_ext)), to = max(max(stats_carbon_seq6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_seq7$prop_surv <- (1-stats_carbon_seq7$X0L)
+stats_carbon_seq7$prop_ext <- stats_carbon_seq7$pri_ext/ESall
+stats_carbon_seq7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq7)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq7)
+AUC_carbon_seq7 <- AUC(stats_carbon_seq7$prop_ext, stats_carbon_seq7$prop_surv, from = min(min(stats_carbon_seq7$prop_ext)), to = max(max(stats_carbon_seq7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_carbon_seq8$prop_surv <- (1-stats_carbon_seq8$X0L)
+stats_carbon_seq8$prop_ext <- stats_carbon_seq8$pri_ext/ESall
+stats_carbon_seq8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_carbon_seq8)+1, prop_surv = 1, prop_ext = 0), stats_carbon_seq8)
+AUC_carbon_seq8 <- AUC(stats_carbon_seq8$prop_ext, stats_carbon_seq8$prop_surv, from = min(min(stats_carbon_seq8$prop_ext)), to = max(max(stats_carbon_seq8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+##para identidad
+stats_identidad1$prop_surv <- (1-stats_identidad1$X0L)
+stats_identidad1$prop_ext <- stats_identidad1$pri_ext/ESall
+stats_identidad1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad1)+1, prop_surv = 1, prop_ext = 0), stats_identidad1)
+AUC_identidad1 <- AUC(stats_identidad1$prop_ext, stats_identidad1$prop_surv, from = min(min(stats_identidad1$prop_ext)), to = max(max(stats_identidad1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_identidad2$prop_surv <- (1-stats_identidad2$X0L)
+stats_identidad2$prop_ext <- stats_identidad2$pri_ext/ESall
+stats_identidad2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad2)+1, prop_surv = 1, prop_ext = 0), stats_identidad2)
+AUC_identidad2 <- AUC(stats_identidad2$prop_ext, stats_identidad2$prop_surv, from = min(min(stats_identidad2$prop_ext)), to = max(max(stats_identidad2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_identidad3$prop_surv <- (1-stats_identidad3$X0L)
+stats_identidad3$prop_ext <- stats_identidad3$pri_ext/length(supporters)
+stats_identidad3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad3)+1, prop_surv = 1, prop_ext = 0), stats_identidad3)
+AUC_identidad3 <- AUC(stats_identidad3$prop_ext, stats_identidad3$prop_surv, from = min(min(stats_identidad3$prop_ext)), to = max(max(stats_identidad3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_identidad4$prop_surv <- (1-stats_identidad4$X0L)
+stats_identidad4$prop_ext <- stats_identidad4$pri_ext/length(supporters)
+stats_identidad4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad4)+1, prop_surv = 1, prop_ext = 0), stats_identidad4)
+AUC_identidad4 <- AUC(stats_identidad4$prop_ext, stats_identidad4$prop_surv, from = min(min(stats_identidad4$prop_ext)), to = max(max(stats_identidad4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_identidad5$prop_surv <- (1-stats_identidad5$X0L)
+stats_identidad5$prop_ext <- stats_identidad5$pri_ext/length(supporters)
+stats_identidad5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad5)+1, prop_surv = 1, prop_ext = 0), stats_identidad5)
+AUC_identidad5 <- AUC(stats_identidad5$prop_ext, stats_identidad5$prop_surv, from = min(min(stats_identidad5$prop_ext)), to = max(max(stats_identidad5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_identidad6$prop_surv <- (1-stats_identidad6$X0L)
+stats_identidad6$prop_ext <- stats_identidad6$pri_ext/length(providers)
+stats_identidad6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad6)+1, prop_surv = 1, prop_ext = 0), stats_identidad6)
+AUC_identidad6 <- AUC(stats_identidad6$prop_ext, stats_identidad6$prop_surv, from = min(min(stats_identidad6$prop_ext)), to = max(max(stats_identidad6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_identidad7$prop_surv <- (1-stats_identidad7$X0L)
+stats_identidad7$prop_ext <- stats_identidad7$pri_ext/ESall
+stats_identidad7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad7)+1, prop_surv = 1, prop_ext = 0), stats_identidad7)
+AUC_identidad7 <- AUC(stats_identidad7$prop_ext, stats_identidad7$prop_surv, from = min(min(stats_identidad7$prop_ext)), to = max(max(stats_identidad7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_identidad8$prop_surv <- (1-stats_identidad8$X0L)
+stats_identidad8$prop_ext <- stats_identidad8$pri_ext/ESall
+stats_identidad8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_identidad8)+1, prop_surv = 1, prop_ext = 0), stats_identidad8)
+AUC_identidad8 <- AUC(stats_identidad8$prop_ext, stats_identidad8$prop_surv, from = min(min(stats_identidad8$prop_ext)), to = max(max(stats_identidad8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+#para educacion
+stats_edu1$prop_surv <- (1-stats_edu1$X0L)
+stats_edu1$prop_ext <- stats_edu1$pri_ext/ESall
+stats_edu1 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu1)+1, prop_surv = 1, prop_ext = 0), stats_edu1)
+AUC_edu1 <- AUC(stats_edu1$prop_ext, stats_edu1$prop_surv, from = min(min(stats_edu1$prop_ext)), to = max(max(stats_edu1$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_edu2$prop_surv <- (1-stats_edu2$X0L)
+stats_edu2$prop_ext <- stats_edu2$pri_ext/ESall
+stats_edu2 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu2)+1, prop_surv = 1, prop_ext = 0), stats_edu2)
+AUC_edu2 <- AUC(stats_edu2$prop_ext, stats_edu2$prop_surv, from = min(min(stats_edu2$prop_ext)), to = max(max(stats_edu2$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_edu3$prop_surv <- (1-stats_edu3$X0L)
+stats_edu3$prop_ext <- stats_edu3$pri_ext/length(supporters)
+stats_edu3 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu3)+1, prop_surv = 1, prop_ext = 0), stats_edu3)
+AUC_edu3 <- AUC(stats_edu3$prop_ext, stats_edu3$prop_surv, from = min(min(stats_edu3$prop_ext)), to = max(max(stats_edu3$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_edu4$prop_surv <- (1-stats_edu4$X0L)
+stats_edu4$prop_ext <- stats_edu4$pri_ext/length(supporters)
+stats_edu4 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu4)+1, prop_surv = 1, prop_ext = 0), stats_edu4)
+AUC_edu4 <- AUC(stats_edu4$prop_ext, stats_edu4$prop_surv, from = min(min(stats_edu4$prop_ext)), to = max(max(stats_edu4$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_edu5$prop_surv <- (1-stats_edu5$X0L)
+stats_edu5$prop_ext <- stats_edu5$pri_ext/length(supporters)
+stats_edu5 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu5)+1, prop_surv = 1, prop_ext = 0), stats_edu5)
+AUC_edu5 <- AUC(stats_edu5$prop_ext, stats_edu5$prop_surv, from = min(min(stats_edu5$prop_ext)), to = max(max(stats_edu5$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_edu6$prop_surv <- (1-stats_edu6$X0L)
+stats_edu6$prop_ext <- stats_edu6$pri_ext/length(providers)
+stats_edu6 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu6)+1, prop_surv = 1, prop_ext = 0), stats_edu6)
+AUC_edu6 <- AUC(stats_edu6$prop_ext, stats_edu6$prop_surv, from = min(min(stats_edu6$prop_ext)), to = max(max(stats_edu6$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_edu7$prop_surv <- (1-stats_edu7$X0L)
+stats_edu7$prop_ext <- stats_edu7$pri_ext/ESall
+stats_edu7 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu7)+1, prop_surv = 1, prop_ext = 0), stats_edu7)
+AUC_edu7 <- AUC(stats_edu7$prop_ext, stats_edu7$prop_surv, from = min(min(stats_edu7$prop_ext)), to = max(max(stats_edu7$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+stats_edu8$prop_surv <- (1-stats_edu8$X0L)
+stats_edu8$prop_ext <- stats_edu8$pri_ext/ESall
+stats_edu8 <- rbind(data.frame(X0L = 0, pri_ext = 0, n = nrow(stats_edu8)+1, prop_surv = 1, prop_ext = 0), stats_edu8)
+AUC_edu8 <- AUC(stats_edu8$prop_ext, stats_edu8$prop_surv, from = min(min(stats_edu8$prop_ext)), to = max(max(stats_edu8$prop_ext)), method = c("trapezoid"), absolutearea = FALSE)
+
+```
+
+```{r}
+#calculacion de la robustez media para cada SE
+rmean_fishing <- sum(AUC_fishing1, AUC_fishing2, AUC_fishing3, AUC_fishing4, AUC_fishing5, AUC_fishing6, AUC_fishing7, AUC_fishing8)/8
+rmean_raw_mat <- sum(AUC_raw_mat1, AUC_raw_mat2, AUC_raw_mat3, AUC_raw_mat4, AUC_raw_mat5, AUC_raw_mat6, AUC_raw_mat7, AUC_raw_mat8)/8
+rmean_biodiv <- sum(AUC_biodiv1, AUC_biodiv2, AUC_biodiv3, AUC_biodiv4, AUC_biodiv5, AUC_biodiv6, AUC_biodiv7, AUC_biodiv8)/8
+rmean_biopur <- sum(AUC_biopur1, AUC_biopur2, AUC_biopur3, AUC_biopur4, AUC_biopur5, AUC_biopur6, AUC_biopur7, AUC_biopur8)/8
+rmean_carbon_flux <- sum(AUC_carbon_flux1, AUC_carbon_flux2, AUC_carbon_flux3, AUC_carbon_flux4, AUC_carbon_flux5, AUC_carbon_flux6, AUC_carbon_flux7, AUC_carbon_flux8)/8
+rmean_carbon_seq <- sum(AUC_carbon_seq1, AUC_carbon_seq2, AUC_carbon_seq3, AUC_carbon_seq4, AUC_carbon_seq5, AUC_carbon_seq6, AUC_carbon_seq7, AUC_carbon_seq8)/8
+rmean_identity <- sum(AUC_identidad1, AUC_identidad2, AUC_identidad3, AUC_identidad4, AUC_identidad5, AUC_identidad6, AUC_identidad7, AUC_identidad8)/8
+rmean_edu <- sum(AUC_edu1, AUC_edu2, AUC_edu3, AUC_edu4, AUC_edu5, AUC_edu6, AUC_edu7, AUC_edu8)/8
+rmean <- c(rmean_fishing, rmean_raw_mat, rmean_biodiv, rmean_biopur, rmean_carbon_flux, rmean_carbon_seq, rmean_identity, rmean_edu)
+
+#agregacion de todos los valores de robustez
+rmean <- as.numeric(rmean)
+r1 <- c(AUC_fishing1, AUC_raw_mat1, AUC_biodiv1, AUC_biopur1, AUC_carbon_flux1, AUC_carbon_seq1, AUC_identidad1, AUC_edu1)
+r2 <- c(AUC_fishing2, AUC_raw_mat2, AUC_biodiv2, AUC_biopur2, AUC_carbon_flux2, AUC_carbon_seq2, AUC_identidad2, AUC_edu2)
+r3 <- c(AUC_fishing3, AUC_raw_mat3, AUC_biodiv3, AUC_biopur3, AUC_carbon_flux3, AUC_carbon_seq3, AUC_identidad3, AUC_edu3)
+r4 <- c(AUC_fishing4, AUC_raw_mat4, AUC_biodiv4, AUC_biopur4, AUC_carbon_flux4, AUC_carbon_seq4, AUC_identidad4, AUC_edu4)
+r5 <- c(AUC_fishing5, AUC_raw_mat5, AUC_biodiv5, AUC_biopur5, AUC_carbon_flux5, AUC_carbon_seq5, AUC_identidad5, AUC_edu5)
+r6 <- c(AUC_fishing6, AUC_raw_mat6, AUC_biodiv6, AUC_biopur6, AUC_carbon_flux6, AUC_carbon_seq6, AUC_identidad6, AUC_edu6)
+r7 <- c(AUC_fishing7, AUC_raw_mat7, AUC_biodiv7, AUC_biopur7, AUC_carbon_flux7, AUC_carbon_seq7, AUC_identidad7, AUC_edu7)
+r8 <- c(AUC_fishing8, AUC_raw_mat8, AUC_biodiv8, AUC_biopur8, AUC_carbon_flux8, AUC_carbon_seq8, AUC_identidad8, AUC_edu8)
+r1 <- as.numeric(r1)
+r2 <- as.numeric(r2)
+r3 <- as.numeric(r3)
+r4 <- as.numeric(r4)
+r5 <- as.numeric(r5)
+r6 <- as.numeric(r6)
+r7 <- as.numeric(r7)
+r8 <- as.numeric(r8)
+
+#calculacion de estadísticas topológicas para los SEs
+ES <- c("Pesca", "Materia prima", "Biodiversidad", "Biopurificacion", "Flujo de carbono", "Secuestro de carbono", "Identidad", "Educacion")
+ESnet <- graph.data.frame(ESlinks, directed = T, vertices = nodes)
+ESmat <- as_adjacency_matrix(ESnet, sparse = FALSE, attr = NULL)
+degree <- degree(ESnet)
+nodes$degree <- degree
+tl <- TrophInd(Tij = t(ESmat))
+nodes$tl <- tl$TL
+top <- calc_topological_roles(ESnet)
+top <- top[match(c(386, 385, 380, 381, 382, 387, 384, 383), top$node), ]
+am <- top$among_module_conn
+wm <- top$within_module_degree
+
+#creacion de cuadro de datos
+robustness <- subset(nodes, nodes$vertextype > 30)
+robustness <- robustness[match(ES, robustness$Species), ]
+robustness <- robustness[,c(1,7,8)]
+robustness <- cbind(robustness, am, wm, rmean, r1, r2, r3, r4, r5, r6, r7, r8)
+
+
+#calculacion de valores de correlacion
+#robustez media
+cor.test(robustness$rmean, robustness$degree, method = "spearman")
+lm(robustness$rmean ~ robustness$degree)
+cor.test(robustness$rmean, robustness$tl, method = "spearman")
+cor.test(robustness$rmean, robustness$wm, method = "spearman")
+cor.test(robustness$rmean, robustness$am, method = "spearman")
+
+#secuencia 1
+cor.test(robustness$r1, robustness$degree, method = "spearman")
+cor.test(robustness$r1, robustness$tl, method = "spearman")
+cor.test(robustness$r1, robustness$am, method = "spearman")
+cor.test(robustness$r1, robustness$wm, method = "spearman")
+
+#secuencia 2
+cor.test(robustness$r2, robustness$degree, method = "spearman")
+cor.test(robustness$r2, robustness$tl, method = "spearman")
+cor.test(robustness$r2, robustness$am, method = "spearman")
+cor.test(robustness$r2, robustness$wm, method = "spearman")
+
+#secuencia 3
+cor.test(robustness$r3, robustness$degree, method = "spearman")
+cor.test(robustness$r3, robustness$tl, method = "spearman")
+cor.test(robustness$r3, robustness$am, method = "spearman")
+cor.test(robustness$r3, robustness$wm, method = "spearman")
+
+#secuencia 4
+cor.test(robustness$r4, robustness$degree, method = "spearman")
+cor.test(robustness$r4, robustness$tl, method = "spearman")
+cor.test(robustness$r4, robustness$am, method = "spearman")
+cor.test(robustness$r4, robustness$wm, method = "spearman")
+
+#secuencia 5
+cor.test(robustness$r5, robustness$degree, method = "spearman")
+cor.test(robustness$r5, robustness$tl, method = "spearman")
+cor.test(robustness$r5, robustness$am, method = "spearman")
+cor.test(robustness$r5, robustness$wm, method = "spearman")
+
+#secuencia 6
+cor.test(robustness$r6, robustness$degree, method = "spearman")
+cor.test(robustness$r6, robustness$tl, method = "spearman")
+cor.test(robustness$r6, robustness$am, method = "spearman")
+cor.test(robustness$r6, robustness$wm, method = "spearman")
+
+#secuencia 7
+cor.test(robustness$r7, robustness$degree, method = "spearman")
+cor.test(robustness$r7, robustness$tl, method = "spearman")
+cor.test(robustness$r7, robustness$am, method = "spearman")
+cor.test(robustness$r7, robustness$wm, method = "spearman")
+
+#secuencia 8
+cor.test(robustness$r8, robustness$degree, method = "spearman")
+cor.test(robustness$r8, robustness$tl, method = "spearman")
+cor.test(robustness$r8, robustness$am, method = "spearman")
+cor.test(robustness$r8, robustness$wm, method = "spearman")
+```
+
+```{r}
+#creacion de gráficos
+pesca <- robustness[c(1),]
+raw_mat <- robustness[c(2),]
+biodiv <- robustness[c(3),]
+biopur <- robustness[c(4),]
+carbon_flux <- robustness[c(5),]
+carbon_seq <- robustness[c(6),]
+identidad <- robustness[c(7),]
+edu <- robustness[c(8),]
+mean <- robustness[,c(6)]
+
+AUCs <- c(pesca[7:14], raw_mat[7:14], biodiv[7:14], biopur[7:14], carbon_flux[7:14], carbon_seq[7:14], identidad[7:14], edu[7:14], mean)
+labels <- c("Pesca", "Pesca", "Pesca", "Pesca", "Pesca", "Pesca", "Pesca", "Pesca", "Materia prima", "Materia prima", "Materia prima", "Materia prima", "Materia prima", "Materia prima", "Materia prima", "Materia prima", "Biodiversidad", "Biodiversidad", "Biodiversidad", "Biodiversidad", "Biodiversidad", "Biodiversidad", "Biodiversidad", "Biodiversidad", "Biopurificacion", "Biopurificacion", "Biopurificacion", "Biopurificacion", "Biopurificacion", "Biopurificacion", "Biopurificacion", "Biopurificacion", "Flujo de carbono", "Flujo de carbono", "Flujo de carbono", "Flujo de carbono", "Flujo de carbono", "Flujo de carbono", "Flujo de carbono", "Flujo de carbono", "Secuestro de carbono", "Secuestro de carbono", "Secuestro de carbono", "Secuestro de carbono", "Secuestro de carbono", "Secuestro de carbono", "Secuestro de carbono", "Secuestro de carbono", "Identidad", "Identidad", "Identidad", "Identidad", "Identidad", "Identidad", "Identidad", "Identidad", "Educacion", "Educacion", "Educacion", "Educacion", "Educacion", "Educacion", "Educacion", "Educacion", "Pesca", "Materia prima","Biodiversidad","Biopurificacion","Flujo de carbono","Secuestro de carbono","Identidad", "Educacion")
+labels2 <- c(1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,1,2,3,4,5,6,7,8)
+labels3 <- c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0)
+EScor <- cbind(labels, AUCs, labels2, labels3)
+EScor <- as.data.frame(EScor)
+EScor$AUCs <- as.numeric(EScor$AUCs)
+EScor$labels <- as.character(EScor$labels)
+EScor$labels2 <- as.numeric(EScor$labels2)
+EScor$labels3 <- as.character(EScor$labels3)
+
+#grafico para robustez
+EScor %>% mutate(labels = fct_reorder(labels, rev(labels2))) %>% ggplot(aes(x=AUCs, y=labels, color = labels3)) + geom_point(size=3) + theme_bw() + ylab(NULL) + xlab("Robustez") + scale_color_manual(values=c("darkcyan", "black")) +theme(axis.text=element_text(size=12), axis.title=element_text(size=14))
+
+#calculacion de estadisticas topologicas
+ESmat <- as_adjacency_matrix(ESnet, sparse = FALSE, attr = NULL)
+ESdegree <- degree(ESnet)
+EStl <- TrophInd(Tij = t(ESmat))
+nodes$ESdegree <- ESdegree
+nodes$EStl <- EStl
+ESmetrics <- subset(nodes, nodes$vertextype > 30)
+ESmetrics <- ESmetrics[match(ES, ESmetrics$Species), ]
+ESmetrics <- cbind(ESmetrics[,c(7,8)], am, wm, ES, c(1,2,3,4,5,6,7,8))
+
+#graficos de estadisticas topologicas
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=degree, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Redundancia")
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=tl, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Nivel trófico")
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=am, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Conexión entre módulos")
+ESmetrics %>% mutate(ES = fct_reorder(ES, rev(c(1,2,3,4,5,6,7,8)))) %>% ggplot(aes(x=wm, y=ES)) + geom_point() + theme_bw() + ylab(NULL) + xlab("Conexión dentro módulos")
+
+```
