@@ -1,1 +1,1 @@
-Todo el código para las simulacioens y su análisis está adentro de esta carpeta. Los subcarpetas contienen datos de R (R Datos), datos de CSV (Datos) y el código usado para generar archivo "Indirect.All" para las secuencias de importancia ("Secuencias/Personalized-Pagerank")
+Todo el código para las simulaciones y su análisis está adentro de esta carpeta. Los subcarpetas contienen datos de R (R Datos), datos de CSV (Datos) y el código usado para generar archivo "Indirect.All" para las secuencias de importancia ("Secuencias/Personalized-Pagerank")
